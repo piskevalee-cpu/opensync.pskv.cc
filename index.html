@@ -1,473 +1,297 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="OpenSync is a self-hosted LAN game archive with differential save sync, streaming downloads, and a native desktop launcher for Linux and Windows.">
-  <meta name="theme-color" content="#0c0d10">
-  <title>OpenSync — Self-hosted game library and save sync</title>
-  <link rel="icon" href="assets/favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenSync — Self-hosted game library and automatic save sync</title>
+  <meta name="description" content="Self-hosted game archive server and native desktop launcher with wire-speed streaming extraction and automatic differential save sync.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
-  <header class="topbar" id="topbar">
+  <header class="topbar">
     <div class="topbar-inner">
-      <a class="logo" href="#overview" aria-label="OpenSync home">
-        <img src="assets/opensync-nav-2x.png" alt="OpenSync" width="142" height="32">
+      <a class="logo-link" href="#top" aria-label="OpenSync Home">
+        <img src="assets/opensync-nav-2x.png" alt="OpenSync" height="28">
       </a>
-      <nav class="nav" aria-label="Sections">
-        <a href="#overview" class="active" data-nav="overview">Overview</a>
-        <a href="#sync" data-nav="sync">Differential sync</a>
-        <a href="#launcher" data-nav="launcher">Desktop launcher</a>
-        <a href="#stack" data-nav="stack">Architecture</a>
-        <a href="#install" data-nav="install">Install</a>
+
+      <nav class="nav" aria-label="Primary">
+        <a href="#cabinet">Launcher</a>
+        <a href="#capabilities">Features</a>
+        <a href="#install">Install</a>
       </nav>
+
       <div class="topbar-actions">
-        <a class="btn btn-ghost btn-sm" href="https://github.com/piskevalee-cpu/OpenSync" target="_blank" rel="noopener">Source</a>
-        <a class="btn btn-primary btn-sm" href="#install">Get the launcher</a>
+        <a class="pill-btn pill-ghost pill-sm" href="https://github.com/piskevalee-cpu/OpenSync" target="_blank" rel="noopener">
+          <span>GitHub</span>
+          <span class="arrow-diag" aria-hidden="true">&#8599;</span>
+        </a>
+        <a class="pill-btn pill-solid pill-sm" href="#install">
+          <span>Download</span>
+        </a>
       </div>
+    </div>
+
+    <div class="announce-bar" id="announce-bar">
+      <a class="announce-link" href="#install">
+        <span class="announce-tag">v0.1.0</span>
+        <span class="announce-text">OpenSync Launcher now ships for Linux AppImage, Flatpak, and Windows .exe</span>
+        <span class="announce-cta">Get packages <span class="arrow-right" aria-hidden="true">&#8594;</span></span>
+      </a>
+      <button type="button" class="announce-close" id="announce-close" aria-label="Dismiss announcement">&times;</button>
     </div>
   </header>
 
-  <main>
-    <section class="hero" id="overview">
-      <div class="hero-copy">
-        <div class="hero-brand-lockup">
-          <img src="assets/icon.png" alt="OpenSync application icon" width="44" height="44" class="hero-app-icon">
-          <span class="hero-release-note">OpenSync Server &amp; Launcher v0.1.0</span>
-        </div>
-        <h1 class="hero-title">Your offline games, synced on your hardware.</h1>
-        <p class="hero-lead">Store uncompressed game folders on your home server or NAS. Stream copies over LAN in seconds, keep every player's saves isolated on top of a clean baseline, and play through the native desktop launcher.</p>
+  <main id="top">
+    <section class="hero" id="hero">
+      <canvas class="particle-canvas" id="hero-particles" aria-hidden="true"></canvas>
 
-        <div class="install-command-box">
-          <span class="cmd-prompt" aria-hidden="true">$</span>
-          <code id="hero-cmd">curl -fsSL https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/install.sh | bash</code>
-          <button type="button" class="cmd-copy-btn" data-copy="hero-cmd">Copy command</button>
+      <div class="hero-inner">
+        <div class="emblem-stage" id="emblem-stage" tabindex="0" aria-label="Interactive OpenSync emblem">
+          <div class="emblem-ring" aria-hidden="true"></div>
+          <div class="emblem-card">
+            <img src="assets/icon.png" alt="" width="76" height="76" class="emblem-icon">
+            <img src="assets/opensync-squares.png" alt="" width="44" height="44" class="emblem-float" aria-hidden="true">
+            <div class="emblem-sheen" aria-hidden="true"></div>
+          </div>
         </div>
 
-        <div class="hero-cta-row">
-          <a class="btn btn-primary" href="#install">Download launcher</a>
-          <a class="btn btn-secondary" href="#launcher">See launcher features</a>
+        <p class="hero-kicker">OpenSync Server &amp; Desktop Launcher</p>
+
+        <h1 class="hero-title">Your offline games,<br>synced on your hardware.</h1>
+
+        <p class="hero-subtitle">Store games as plain directories on your own server. Stream uncompressed builds across LAN and sync every save diff per player automatically.</p>
+
+        <div class="hero-ctas">
+          <a class="pill-btn pill-solid" href="#install">
+            <span>Download v0.1.0</span>
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M10 3v9m0 0l-3.5-3.5M10 12l3.5-3.5M4 15.5h12" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a class="pill-btn pill-tonal" href="#cabinet">
+            <span>Explore launcher</span>
+            <span class="arrow-right" aria-hidden="true">&#8594;</span>
+          </a>
         </div>
       </div>
+    </section>
 
-      <div class="launcher-stage" aria-label="Interactive OpenSync Launcher preview">
-        <div class="launcher-window" id="hero-launcher">
-          <div class="lw-topbar">
-            <div class="lw-left">
-              <img src="assets/opensync-nav-2x.png" alt="" height="20" class="lw-wordmark">
-              <nav class="lw-tabs" aria-label="Launcher views preview">
-                <span class="lw-tab is-active">library</span>
-                <span class="lw-tab">downloads</span>
-                <span class="lw-tab">settings</span>
-              </nav>
-            </div>
-            <div class="lw-right">
-              <button type="button" class="lw-chip" id="lw-activity-btn" aria-expanded="false">
-                <span class="lw-chip-dot" id="lw-sync-dot"></span>
-                <span id="lw-activity-label">Activity</span>
-                <span class="lw-count" id="lw-activity-count">2</span>
-              </button>
-              <span class="lw-conn"><i aria-hidden="true"></i>Connected</span>
-              <span class="lw-profile"><span class="lw-avatar">V</span><span>valerio</span></span>
-            </div>
+    <section class="section cabinet-section" id="cabinet">
+      <div class="cabinet-grid">
+        <div class="cabinet-copy">
+          <h2 class="section-title">One cabinet across every machine</h2>
+          <p class="section-lead">Games live on disk as real folders instead of opaque archives. The native Rust and Tauri launcher streams uncompressed files directly to disk and isolates save overlays per player account.</p>
+
+          <div class="mode-pills" role="tablist" aria-label="Launcher highlights">
+            <button type="button" class="mode-pill is-active" role="tab" aria-selected="true" data-mode="sync">Auto save sync</button>
+            <button type="button" class="mode-pill" role="tab" aria-selected="false" data-mode="stream">Zero-temp streaming</button>
+            <button type="button" class="mode-pill" role="tab" aria-selected="false" data-mode="recovery">Crash recovery</button>
           </div>
 
-          <div class="lw-activity-popover" id="lw-activity-popover" hidden>
-            <div class="lw-pop-head">
-              <span>Sync and launch log</span>
-              <button type="button" class="lw-pop-close" id="lw-pop-close" aria-label="Close activity log">&times;</button>
-            </div>
-            <div class="lw-pop-list" id="lw-pop-list"></div>
-          </div>
+          <p class="mode-caption" id="mode-caption">Exits trigger SHA-256 hashing against the clean manifest and upload only modified save chunks. Offline queues flush automatically on reconnect.</p>
+        </div>
 
-          <div class="lw-body">
-            <div class="lw-bar">
-              <span class="lw-heading">GAME LIBRARY</span>
-              <span class="lw-status-note" id="lw-session-note">Click Play on a game to simulate a launch and post-exit auto-sync.</span>
+        <div class="cabinet-frame-wrap">
+          <div class="cabinet-halo" aria-hidden="true"></div>
+          <div class="cabinet-window" id="cabinet-window">
+            <div class="cw-top">
+              <div class="cw-brand">
+                <img src="assets/opensync-squares.png" alt="" width="20" height="20">
+                <span>Library</span>
+              </div>
+              <div class="cw-status">
+                <span class="cw-badge" id="cw-state-pill"><i aria-hidden="true"></i> <span id="cw-state-text">LAN ready</span></span>
+                <span class="cw-user">valerio</span>
+              </div>
             </div>
 
-            <div class="lw-cards" id="lw-cards">
-              <article class="capsule-card" data-game="0" tabindex="0">
-                <div class="capsule-art">
-                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Fogwoods cover">
+            <div class="cw-cards">
+              <article class="game-tile" data-title="Fogwoods" tabindex="0">
+                <div class="tile-art tile-art-1">
+                  <svg viewBox="0 0 240 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                     <defs>
-                      <linearGradient id="c1sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1b1e"/><stop offset="0.55" stop-color="#14302c"/><stop offset="1" stop-color="#080c0d"/></linearGradient>
-                      <radialGradient id="c1glow" cx="52%" cy="32%" r="48%"><stop offset="0" stop-color="#7dfa9b" stop-opacity="0.34"/><stop offset="1" stop-color="#080c0d" stop-opacity="0"/></radialGradient>
+                      <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1d1c"/><stop offset="1" stop-color="#070a0b"/></linearGradient>
                     </defs>
-                    <rect width="400" height="600" fill="url(#c1sky)"/>
-                    <rect width="400" height="600" fill="url(#c1glow)"/>
-                    <circle cx="215" cy="228" r="46" fill="#d9ffe4" opacity="0.82"/>
-                    <path d="M0 370 L85 285 L160 325 L250 245 L335 315 L400 265 L400 600 L0 600 Z" fill="#0d1919"/>
-                    <path d="M0 440 L95 365 L205 420 L315 350 L400 400 L400 600 L0 600 Z" fill="#081011"/>
-                    <text x="28" y="138" fill="#d8ffe1" font-family="Inter, sans-serif" font-weight="800" font-size="32" letter-spacing="1.5">FOGWOODS</text>
+                    <rect width="240" height="360" fill="url(#g1)"/>
+                    <circle cx="124" cy="126" r="28" fill="#c9ffd6" opacity="0.82"/>
+                    <path d="M0 240 L60 175 L120 212 L180 158 L240 205 L240 360 L0 360 Z" fill="#0e1a1a"/>
+                    <path d="M0 285 L85 232 L175 268 L240 228 L240 360 L0 360 Z" fill="#091011"/>
                   </svg>
-                  <div class="card-glass-sheen"></div>
+                  <div class="tile-sheen"></div>
                 </div>
-                <span class="capsule-state state-synced" data-card-badge="0">Synced</span>
-                <button type="button" class="card-play" data-play-index="0" aria-label="Play Fogwoods">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span class="tile-chip">Synced</span>
+                <button type="button" class="tile-play" data-game="Fogwoods" aria-label="Simulate playing Fogwoods">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
-                <div class="card-glass-footer">
-                  <div class="card-glass-info">
-                    <span class="card-glass-title">Fogwoods</span>
-                    <span class="card-glass-meta" data-card-meta="0">1.84 GB &middot; Native Linux</span>
-                  </div>
+                <div class="tile-meta">
+                  <strong>Fogwoods</strong>
+                  <span>1.84 GB · Native Linux</span>
                 </div>
               </article>
 
-              <article class="capsule-card" data-game="1" tabindex="0">
-                <div class="capsule-art">
-                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Cyber Runner 2077 cover">
+              <article class="game-tile" data-title="Cyber Runner 2077" tabindex="0">
+                <div class="tile-art tile-art-2">
+                  <svg viewBox="0 0 240 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                     <defs>
-                      <linearGradient id="c2sky" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#140c24"/><stop offset="0.55" stop-color="#1f1136"/><stop offset="1" stop-color="#090a12"/></linearGradient>
-                      <radialGradient id="c2glow" cx="68%" cy="30%" r="55%"><stop offset="0" stop-color="#ff4d94" stop-opacity="0.38"/><stop offset="1" stop-color="#090a12" stop-opacity="0"/></radialGradient>
+                      <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#170f28"/><stop offset="1" stop-color="#080910"/></linearGradient>
                     </defs>
-                    <rect width="400" height="600" fill="url(#c2sky)"/>
-                    <rect width="400" height="600" fill="url(#c2glow)"/>
-                    <g fill="#0c0b16">
-                      <rect x="28" y="255" width="58" height="345"/><rect x="96" y="210" width="66" height="390"/>
-                      <rect x="174" y="175" width="76" height="425"/><rect x="262" y="225" width="60" height="375"/>
-                      <rect x="330" y="195" width="58" height="405"/>
-                    </g>
-                    <line x1="0" y1="420" x2="400" y2="365" stroke="#7dfa9b" stroke-width="2.5" opacity="0.75"/>
-                    <text x="28" y="138" fill="#ffffff" font-family="Inter, sans-serif" font-weight="800" font-size="28" letter-spacing="1.2">CYBER RUNNER</text>
+                    <rect width="240" height="360" fill="url(#g2)"/>
+                    <circle cx="170" cy="96" r="54" fill="#ff5ca1" opacity="0.16"/>
+                    <rect x="20" y="150" width="38" height="210" fill="#0c0b16"/>
+                    <rect x="66" y="122" width="42" height="238" fill="#0c0b16"/>
+                    <rect x="116" y="102" width="46" height="258" fill="#0c0b16"/>
+                    <rect x="170" y="138" width="50" height="222" fill="#0c0b16"/>
+                    <line x1="0" y1="248" x2="240" y2="214" stroke="#7dfa9b" stroke-width="1.6" opacity="0.72"/>
                   </svg>
-                  <div class="card-glass-sheen"></div>
+                  <div class="tile-sheen"></div>
                 </div>
-                <span class="capsule-state state-proton" data-card-badge="1">GE-Proton</span>
-                <button type="button" class="card-play" data-play-index="1" aria-label="Play Cyber Runner 2077">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span class="tile-chip chip-blue">GE-Proton</span>
+                <button type="button" class="tile-play" data-game="Cyber Runner 2077" aria-label="Simulate playing Cyber Runner 2077">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
-                <div class="card-glass-footer">
-                  <div class="card-glass-info">
-                    <span class="card-glass-title">Cyber Runner 2077</span>
-                    <span class="card-glass-meta" data-card-meta="1">28.6 GB &middot; Proton 9</span>
-                  </div>
+                <div class="tile-meta">
+                  <strong>Cyber Runner 2077</strong>
+                  <span>28.6 GB · Proton 9</span>
                 </div>
               </article>
 
-              <article class="capsule-card" data-game="2" tabindex="0">
-                <div class="capsule-art">
-                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Hollow Spire cover">
-                    <defs>
-                      <linearGradient id="c3sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#11131e"/><stop offset="0.55" stop-color="#1b2033"/><stop offset="1" stop-color="#090a0f"/></linearGradient>
-                    </defs>
-                    <rect width="400" height="600" fill="url(#c3sky)"/>
-                    <circle cx="200" cy="245" r="64" fill="#e6f2ff" opacity="0.88"/>
-                    <circle cx="222" cy="230" r="58" fill="#171b2b"/>
-                    <path d="M160 600 L182 260 L200 185 L218 260 L240 600 Z" fill="#0b0d14"/>
-                    <circle cx="200" cy="300" r="8" fill="#6bb3ff"/>
-                    <text x="28" y="138" fill="#e8f1ff" font-family="Inter, sans-serif" font-weight="800" font-size="29" letter-spacing="1.2">HOLLOW SPIRE</text>
+              <article class="game-tile" data-title="Hollow Spire" tabindex="0">
+                <div class="tile-art tile-art-3">
+                  <svg viewBox="0 0 240 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <rect width="240" height="360" fill="#10131d"/>
+                    <circle cx="120" cy="130" r="38" fill="#e6f2ff" opacity="0.86"/>
+                    <circle cx="134" cy="120" r="34" fill="#10131d"/>
+                    <path d="M96 360 L110 148 L120 96 L130 148 L144 360 Z" fill="#090b10"/>
+                    <circle cx="120" cy="176" r="4.5" fill="#74b8ff"/>
                   </svg>
-                  <div class="card-glass-sheen"></div>
+                  <div class="tile-sheen"></div>
                 </div>
-                <span class="capsule-state state-pending" data-card-badge="2">1 queued</span>
-                <button type="button" class="card-play" data-play-index="2" aria-label="Play Hollow Spire">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span class="tile-chip chip-amber">1 queued</span>
+                <button type="button" class="tile-play" data-game="Hollow Spire" aria-label="Simulate playing Hollow Spire">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
-                <div class="card-glass-footer">
-                  <div class="card-glass-info">
-                    <span class="card-glass-title">Hollow Spire</span>
-                    <span class="card-glass-meta" data-card-meta="2">4.12 GB &middot; Offline sync</span>
-                  </div>
+                <div class="tile-meta">
+                  <strong>Hollow Spire</strong>
+                  <span>4.12 GB · Offline queue</span>
                 </div>
               </article>
             </div>
 
-            <button type="button" class="lw-fab" id="lw-fab-upload" title="Jump to parallel uploader preview" aria-label="Jump to parallel uploader preview">+</button>
-          </div>
-
-          <div class="lw-sync-banner" id="lw-sync-banner" hidden>
-            <span class="lw-sync-spinner" id="lw-sync-spinner" aria-hidden="true"></span>
-            <div class="lw-sync-copy">
-              <div class="lw-sync-title" id="lw-sync-title">Game closed. Auto-syncing saves...</div>
-              <div class="lw-sync-sub" id="lw-sync-sub">Uploading changed chunks to your overlay</div>
+            <div class="cw-footer">
+              <span id="cw-footer-note">Hover a card or click Play to preview post-exit sync</span>
+              <span class="cw-metric" id="cw-metric">98.4 MB/s</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="sync">
-      <div class="section-header">
-        <h2 class="section-heading">Differential save sync</h2>
-        <p class="section-copy">Games live on the server as plain directories rather than locked archives. Every player syncs only the files that differ from the shared clean manifest, so gigabyte asset packs never move twice and player saves never collide.</p>
+    <section class="section capabilities-section" id="capabilities">
+      <div class="section-head-row">
+        <h2 class="section-title">Designed for fast local archives</h2>
+        <a class="pill-btn pill-tonal pill-sm" href="https://github.com/piskevalee-cpu/OpenSync-Launcher" target="_blank" rel="noopener">
+          <span>View source</span>
+          <span class="arrow-diag" aria-hidden="true">&#8599;</span>
+        </a>
       </div>
 
-      <div class="diff-workbench">
-        <div class="diff-modes" role="tablist" aria-label="Save sync state examples">
-          <button type="button" class="diff-tab is-active" role="tab" aria-selected="true" data-mode="clean">
-            <strong>Clean manifest</strong>
-            <span>Original uploaded files hashed once</span>
-          </button>
-          <button type="button" class="diff-tab" role="tab" aria-selected="false" data-mode="usera">
-            <strong>Player A overlay</strong>
-            <span>Two changed save files uploaded in chunks</span>
-          </button>
-          <button type="button" class="diff-tab" role="tab" aria-selected="false" data-mode="userb">
-            <strong>Player B overlay</strong>
-            <span>Independent save plus a tracked deletion</span>
-          </button>
-          <button type="button" class="diff-tab" role="tab" aria-selected="false" data-mode="merge">
-            <strong>Download stream</strong>
-            <span>Server merges clean + overlay minus deletions live</span>
-          </button>
-        </div>
-
-        <div class="diff-panel">
-          <div class="diff-panel-head">
-            <span class="diff-panel-title" id="diff-title">Clean manifest</span>
-            <span class="diff-panel-meta" id="diff-meta">6 files indexed</span>
+      <div class="feature-row">
+        <article class="feature-card" tabindex="0">
+          <div class="feature-visual fv-diff">
+            <div class="fv-glyph">
+              <span class="fv-bar b-clean"></span>
+              <span class="fv-bar b-overlay"></span>
+              <span class="fv-bar b-merged"></span>
+            </div>
+            <span class="fv-hover-badge" aria-hidden="true">&#8599;</span>
           </div>
-          <p class="diff-panel-note" id="diff-note"></p>
-          <div class="diff-rows" id="diff-rows" aria-live="polite"></div>
-        </div>
+          <h3>Differential manifests</h3>
+          <p>Downloads merge the shared baseline and your account overlay on the fly without duplicating assets.</p>
+          <span class="card-more">Read spec <span class="arrow-right" aria-hidden="true">&#8594;</span></span>
+        </article>
+
+        <article class="feature-card" tabindex="0">
+          <div class="feature-visual fv-proton">
+            <div class="fv-ring-pair">
+              <span>ELF</span>
+              <span>PE</span>
+            </div>
+            <span class="fv-hover-badge" aria-hidden="true">&#8599;</span>
+          </div>
+          <h3>Native &amp; GE-Proton</h3>
+          <p>Classifies Linux and Windows binaries automatically and installs SHA-512 verified GE-Proton builds.</p>
+          <span class="card-more">Read spec <span class="arrow-right" aria-hidden="true">&#8594;</span></span>
+        </article>
+
+        <article class="feature-card" tabindex="0">
+          <div class="feature-visual fv-upload">
+            <div class="fv-workers">
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <span class="fv-hover-badge" aria-hidden="true">&#8599;</span>
+          </div>
+          <h3>Parallel 4 MB uploads</h3>
+          <p>Schedules large files first across six workers with client-side SHA-256 verification per chunk.</p>
+          <span class="card-more">Read spec <span class="arrow-right" aria-hidden="true">&#8594;</span></span>
+        </article>
+
+        <article class="feature-card" tabindex="0">
+          <div class="feature-visual fv-guard">
+            <div class="fv-pulse"></div>
+            <span class="fv-hover-badge" aria-hidden="true">&#8599;</span>
+          </div>
+          <h3>Crash &amp; quit guard</h3>
+          <p>Detects unclean exits on startup, offers immediate save recovery, and drains syncs before quitting.</p>
+          <span class="card-more">Read spec <span class="arrow-right" aria-hidden="true">&#8594;</span></span>
+        </article>
       </div>
     </section>
 
-    <section class="section" id="launcher">
-      <div class="section-header">
-        <h2 class="section-heading">Built for real play sessions</h2>
-        <p class="section-copy">The Rust and Tauri desktop client handles installs, compatibility layers, uploads, and unexpected exits without touching the command line.</p>
-      </div>
+    <section class="section install-section" id="install">
+      <canvas class="particle-canvas particle-subtle" id="install-particles" aria-hidden="true"></canvas>
 
-      <div class="console-switcher" role="tablist" aria-label="Launcher capabilities">
-        <button type="button" class="console-tab is-active" role="tab" aria-selected="true" data-console="downloads">Streaming downloads</button>
-        <button type="button" class="console-tab" role="tab" aria-selected="false" data-console="uploads">Parallel game uploads</button>
-        <button type="button" class="console-tab" role="tab" aria-selected="false" data-console="recovery">Crash recovery &amp; safe quit</button>
-      </div>
+      <div class="dual-install">
+        <div class="install-track">
+          <span class="track-pill">Desktop Launcher · v0.1.0</span>
+          <h2>For players</h2>
+          <p>Install the native Linux or Windows client and connect to any server on your network.</p>
 
-      <div class="console-stage">
-        <div class="console-pane is-active" data-pane="downloads">
-          <div class="wave-layout">
-            <div class="wave-surface">
-              <div class="wave-header">
-                <div>
-                  <div class="wave-name">Cyber Runner 2077</div>
-                  <div class="wave-state" id="wave-status">Streaming uncompressed STORE zip straight to disk</div>
-                </div>
-                <div class="wave-metric" id="wave-rate">98.4 MB/s</div>
-              </div>
-              <div class="wave-canvas-wrap" id="wave-wrap">
-                <canvas id="wave-canvas" aria-label="Interactive download speed graph"></canvas>
-                <div class="wave-tooltip" id="wave-tooltip" hidden>
-                  <strong id="tt-rate">0 MB/s</strong>
-                  <span id="tt-time">now</span>
-                </div>
-              </div>
-              <div class="wave-progress-row">
-                <div class="wave-track"><span class="wave-fill" id="wave-progress-bar" style="width:64%"></span></div>
-                <span class="wave-bytes" id="wave-bytes">7.8 / 12.2 GB</span>
-              </div>
-              <div class="wave-controls" role="group" aria-label="Bandwidth limit">
-                <button type="button" class="ctrl-btn is-active" data-wave-mode="store">Unlimited (STORE)</button>
-                <button type="button" class="ctrl-btn" data-wave-mode="throttle">Cap at 50 MB/s</button>
-                <button type="button" class="ctrl-btn" data-wave-mode="paused">Pause transfer</button>
-              </div>
-            </div>
+          <div class="download-pills">
+            <a class="pill-btn pill-solid" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage" target="_blank" rel="noopener">
+              <span>AppImage (Linux)</span>
+            </a>
+            <a class="pill-btn pill-tonal" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak" target="_blank" rel="noopener">
+              <span>Flatpak bundle</span>
+            </a>
+            <a class="pill-btn pill-tonal" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe" target="_blank" rel="noopener">
+              <span>Windows .exe</span>
+            </a>
+          </div>
 
-            <div class="console-sidebar">
-              <h3>Wire speed with zero temp zip</h3>
-              <p>OpenSync streams STORE archives over HTTP with compression off by default, extracting entries straight to your target folder while checking SHA-256 digests on the fly.</p>
-              <dl class="spec-pairs">
-                <div><dt>Compression</dt><dd>Off by default (STORE), optional deflate level 1 to 9</dd></div>
-                <div><dt>Resumable</dt><dd>Pause, resume, cancel, or cap bandwidth per transfer</dd></div>
-                <div><dt>Runtime setup</dt><dd>Detects Steam Proton installs and fetches GE-Proton in one click</dd></div>
-              </dl>
-            </div>
+          <div class="cmd-strip">
+            <code id="cmd-flatpak">flatpak install --user OpenSync_Launcher_0.1.0_amd64.flatpak &amp;&amp; flatpak run io.opensync.launcher</code>
+            <button type="button" class="copy-pill" data-copy="cmd-flatpak">Copy</button>
           </div>
         </div>
 
-        <div class="console-pane" data-pane="uploads" hidden>
-          <div class="wave-layout">
-            <div class="wave-surface">
-              <div class="wave-header">
-                <div>
-                  <div class="wave-name">6-worker parallel folder upload</div>
-                  <div class="wave-state" id="upload-status">Largest files scheduled first across 6 workers in 4 MB chunks</div>
-                </div>
-                <button type="button" class="ctrl-btn" id="btn-run-upload-demo">Run upload pass</button>
-              </div>
-              <div class="upload-workers" id="upload-workers"></div>
-            </div>
+        <div class="install-track">
+          <span class="track-pill">Self-Hosted Server · Node 22.13+</span>
+          <h2>For hosts</h2>
+          <p>Run the Node, Express, and SQLite archive server on Linux, macOS, or Docker in seconds.</p>
 
-            <div class="console-sidebar">
-              <h3>Fast LAN uploads from the library</h3>
-              <p>Click the circular + button in the library to pick or drop any game folder. Files are hashed locally, scheduled largest-first to eliminate tail latency, and streamed in resumable 4 MB chunks.</p>
-              <dl class="spec-pairs">
-                <div><dt>Scheduling</dt><dd>Longest-Processing-Time queue across 6 concurrent workers</dd></div>
-                <div><dt>Manifest indexing</dt><dd>Server hashes files in parallel after final chunk arrives</dd></div>
-                <div><dt>Navigation</dt><dd>Transfers survive view switches with global progress indicator</dd></div>
-              </dl>
-            </div>
-          </div>
-        </div>
-
-        <div class="console-pane" data-pane="recovery" hidden>
-          <div class="wave-layout">
-            <div class="wave-surface">
-              <div class="wave-header">
-                <div>
-                  <div class="wave-name">Session guard &amp; recovery check</div>
-                  <div class="wave-state" id="recovery-status">Live sessions persist in SQLite while a game is running</div>
-                </div>
-                <div class="recovery-actions">
-                  <button type="button" class="ctrl-btn" id="btn-sim-crash">Simulate force-quit</button>
-                  <button type="button" class="ctrl-btn" id="btn-sim-shutdown">Test safe quit</button>
-                </div>
-              </div>
-              <div class="recovery-console" id="recovery-console">
-                <p class="recovery-placeholder">Trigger a simulated force-quit or safe shutdown to inspect how OpenSync protects active save files.</p>
-              </div>
-            </div>
-
-            <div class="console-sidebar">
-              <h3>Never lose unsynced progress</h3>
-              <p>If the launcher closes unexpectedly while a game is open, the next startup inspects local save hashes and timestamps against the server and offers one-click save recovery before background sync runs.</p>
-              <dl class="spec-pairs">
-                <div><dt>Safe quit</dt><dd>Waits for in-flight save uploads and checkpoints SQLite WAL before exit</dd></div>
-                <div><dt>Playtime tracking</dt><dd>Excludes OS suspend and lid-close sleep gaps from session hours</dd></div>
-                <div><dt>Controller support</dt><dd>Full W3C Gamepad and keyboard spatial navigation across every view</dd></div>
-              </dl>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="stack">
-      <div class="section-header">
-        <h2 class="section-heading">Server and launcher division</h2>
-        <p class="section-copy">Two small focused codebases. Self-host the server on Linux or Docker, and connect as many desktop machines on your network as you want.</p>
-      </div>
-
-      <div class="ledger">
-        <div class="ledger-col">
-          <h3>OpenSync Server</h3>
-          <p class="ledger-sub">Node.js 22.13+, Express 5, and built-in SQLite.</p>
-          <ul class="ledger-list">
-            <li>
-              <strong>Live folder storage</strong>
-              <span>Uploaded games remain directly inspectable folders on disk rather than opaque blobs.</span>
-            </li>
-            <li>
-              <strong>Per-user overlays and deletions</strong>
-              <span>Each account keeps its own modified save overlay and versioned deletion list per manifest.</span>
-            </li>
-            <li>
-              <strong>Local authentication and profiles</strong>
-              <span>Password hashing via scrypt, stateless signed session cookies, and optional custom avatars.</span>
-            </li>
-            <li>
-              <strong>Hash verification on receipt</strong>
-              <span>Every overlay file is re-hashed on upload; mismatched hashes are rejected with HTTP 422.</span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="ledger-col">
-          <h3>OpenSync Launcher</h3>
-          <p class="ledger-sub">Rust workspace with a Tauri v2 desktop frontend.</p>
-          <ul class="ledger-list">
-            <li>
-              <strong>Multi-instance profile switcher</strong>
-              <span>Switch between home LAN, NAS servers, or local accounts while keeping local caches isolated.</span>
-            </li>
-            <li>
-              <strong>Automatic runtime resolution</strong>
-              <span>Classifies Windows PE and Linux ELF binaries by magic bytes and attaches GE-Proton on Linux.</span>
-            </li>
-            <li>
-              <strong>Offline queue and background sync</strong>
-              <span>Queues failed post-exit syncs cleanly in SQLite and flushes automatically on reconnect.</span>
-            </li>
-            <li>
-              <strong>Native Linux and Windows builds</strong>
-              <span>Packaged automatically via GitHub Actions into AppImage, Flatpak, and standalone Windows .exe.</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="section deploy-section" id="install">
-      <div class="section-header">
-        <h2 class="section-heading">Install OpenSync</h2>
-        <p class="section-copy">Download a prebuilt desktop package from release v0.1.0, or bring up your own archive server in one command.</p>
-      </div>
-
-      <div class="deploy-box">
-        <div class="deploy-tabs" role="tablist" aria-label="Installation options">
-          <button type="button" class="deploy-tab is-active" role="tab" aria-selected="true" data-install-tab="desktop">Desktop launcher</button>
-          <button type="button" class="deploy-tab" role="tab" aria-selected="false" data-install-tab="server">Server one-liner</button>
-          <button type="button" class="deploy-tab" role="tab" aria-selected="false" data-install-tab="docker">Docker Compose</button>
-          <button type="button" class="deploy-tab" role="tab" aria-selected="false" data-install-tab="source">Build from source</button>
-        </div>
-
-        <div class="deploy-content">
-          <div class="install-pane is-active" data-install-pane="desktop">
-            <div class="release-cards">
-              <div class="release-item">
-                <div class="release-info">
-                  <strong>Linux AppImage (amd64)</strong>
-                  <span>Portable single-file executable. Make executable and run directly on any modern distribution.</span>
-                </div>
-                <a class="btn btn-primary btn-sm" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage" target="_blank" rel="noopener">Download AppImage</a>
-              </div>
-              <div class="release-item">
-                <div class="release-info">
-                  <strong>Linux Flatpak bundle (amd64)</strong>
-                  <span>Sandboxed desktop bundle built on GNOME 49 runtime with DRI, network, and Steam Proton access.</span>
-                </div>
-                <a class="btn btn-secondary btn-sm" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak" target="_blank" rel="noopener">Download Flatpak</a>
-              </div>
-              <div class="release-item">
-                <div class="release-info">
-                  <strong>Windows x64 executable (.exe)</strong>
-                  <span>Standalone desktop binary with native Windows executable launching and folder picker support.</span>
-                </div>
-                <a class="btn btn-secondary btn-sm" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe" target="_blank" rel="noopener">Download .exe</a>
-              </div>
-            </div>
-            <div class="install-command-box" style="margin-top:18px;">
-              <span class="cmd-prompt" aria-hidden="true">$</span>
-              <code id="cmd-flatpak">flatpak install --user OpenSync_Launcher_0.1.0_amd64.flatpak &amp;&amp; flatpak run io.opensync.launcher</code>
-              <button type="button" class="cmd-copy-btn" data-copy="cmd-flatpak">Copy</button>
-            </div>
+          <div class="server-tabs" role="tablist" aria-label="Server install method">
+            <button type="button" class="mode-pill is-active" role="tab" aria-selected="true" data-server="script">Install script</button>
+            <button type="button" class="mode-pill" role="tab" aria-selected="false" data-server="docker">Docker Compose</button>
+            <button type="button" class="mode-pill" role="tab" aria-selected="false" data-server="source">Build from source</button>
           </div>
 
-          <div class="install-pane" data-install-pane="server" hidden>
-            <p class="install-note">Installs Node.js dependencies, clones OpenSync, initializes SQLite storage, and links the <code>opensync</code> management command.</p>
-            <div class="install-command-box">
-              <span class="cmd-prompt" aria-hidden="true">$</span>
-              <code id="cmd-curl">curl -fsSL https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/install.sh | bash</code>
-              <button type="button" class="cmd-copy-btn" data-copy="cmd-curl">Copy</button>
-            </div>
-            <p class="install-subnote">Requires Node.js 22.13 or newer. The first account you register becomes the server administrator.</p>
-          </div>
-
-          <div class="install-pane" data-install-pane="docker" hidden>
-            <p class="install-note">Runs the amd64 server container with persistent storage mounted on <code>/data</code> and healthchecks enabled.</p>
-            <div class="install-command-box">
-              <span class="cmd-prompt" aria-hidden="true">$</span>
-              <code id="cmd-docker">curl -O https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/docker-compose.yml &amp;&amp; docker compose up -d</code>
-              <button type="button" class="cmd-copy-btn" data-copy="cmd-docker">Copy</button>
-            </div>
-            <p class="install-subnote">Docker image target is linux/amd64. Use the install script above on ARM hosts.</p>
-          </div>
-
-          <div class="install-pane" data-install-pane="source" hidden>
-            <p class="install-note">Compile the Tauri v2 desktop launcher workspace directly from GitHub.</p>
-            <div class="install-command-box">
-              <span class="cmd-prompt" aria-hidden="true">$</span>
-              <code id="cmd-source">git clone https://github.com/piskevalee-cpu/OpenSync-Launcher.git &amp;&amp; cd OpenSync-Launcher &amp;&amp; cargo build --release -p launcher-tauri</code>
-              <button type="button" class="cmd-copy-btn" data-copy="cmd-source">Copy</button>
-            </div>
-            <p class="install-subnote">Requires Rust toolchain, GTK3, and WebKitGTK 4.1 development libraries on Linux, or MSVC on Windows.</p>
+          <div class="cmd-strip">
+            <code id="cmd-server">curl -fsSL https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/install.sh | bash</code>
+            <button type="button" class="copy-pill" data-copy="cmd-server">Copy</button>
           </div>
         </div>
       </div>
@@ -476,17 +300,14 @@
 
   <footer class="footer">
     <div class="footer-inner">
-      <div class="footer-left">
-        <img src="assets/icon.png" alt="" width="28" height="28" class="footer-icon">
-        <div>
-          <strong>OpenSync</strong>
-          <span>Self-hosted game library and differential save sync. MIT licensed.</span>
-        </div>
+      <div class="footer-brand">
+        <img src="assets/opensync-squares.png" alt="" width="24" height="24">
+        <span>OpenSync — MIT License</span>
       </div>
       <div class="footer-links">
-        <a href="https://github.com/piskevalee-cpu/OpenSync" target="_blank" rel="noopener">Server repository</a>
-        <a href="https://github.com/piskevalee-cpu/OpenSync-Launcher" target="_blank" rel="noopener">Launcher repository</a>
-        <a href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/tag/v0.1.0" target="_blank" rel="noopener">v0.1.0 releases</a>
+        <a href="https://github.com/piskevalee-cpu/OpenSync" target="_blank" rel="noopener">Server repo <span class="arrow-diag">&#8599;</span></a>
+        <a href="https://github.com/piskevalee-cpu/OpenSync-Launcher" target="_blank" rel="noopener">Launcher repo <span class="arrow-diag">&#8599;</span></a>
+        <a href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/tag/v0.1.0" target="_blank" rel="noopener">v0.1.0 releases <span class="arrow-diag">&#8599;</span></a>
       </div>
     </div>
   </footer>
