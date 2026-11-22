@@ -378,11 +378,16 @@ button {
 }
 
 .mode-pills,
+.player-tabs,
 .server-tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 14px;
+}
+
+.player-download-row {
+  margin-top: 12px;
 }
 
 .mode-pill {

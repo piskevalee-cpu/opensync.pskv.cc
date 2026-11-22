@@ -227,6 +227,42 @@
     });
   });
 
+  // Player package switcher in Install section
+  const PLAYER_TARGETS = {
+    flatpak: {
+      cmd: 'curl -fSL https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak -o /tmp/opensync.flatpak && flatpak install --user -y /tmp/opensync.flatpak && flatpak run io.opensync.launcher',
+      href: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak',
+      label: 'Download .flatpak',
+    },
+    appimage: {
+      cmd: 'curl -fSL https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage -o OpenSync_Launcher.AppImage && chmod +x OpenSync_Launcher.AppImage && ./OpenSync_Launcher.AppImage',
+      href: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage',
+      label: 'Download .AppImage',
+    },
+    windows: {
+      cmd: 'irm https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe -OutFile OpenSync_Launcher.exe; .\\OpenSync_Launcher.exe',
+      href: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe',
+      label: 'Download .exe',
+    },
+  };
+
+  document.querySelectorAll('.player-tabs .mode-pill').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.player-tabs .mode-pill').forEach((other) => {
+        const active = other === tab;
+        other.classList.toggle('is-active', active);
+        other.setAttribute('aria-selected', String(active));
+      });
+      const entry = PLAYER_TARGETS[tab.dataset.player] || PLAYER_TARGETS.flatpak;
+      const codeEl = document.getElementById('cmd-player');
+      const dlLink = document.getElementById('download-player-link');
+      const dlLabel = document.getElementById('download-player-label');
+      if (codeEl) codeEl.textContent = entry.cmd;
+      if (dlLink) dlLink.href = entry.href;
+      if (dlLabel) dlLabel.textContent = entry.label;
+    });
+  });
+
   // Server command switcher in Install section
   const SERVER_CMDS = {
     script: 'curl -fsSL https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/install.sh | bash',

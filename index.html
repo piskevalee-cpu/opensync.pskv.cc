@@ -223,21 +223,21 @@
           <h2>For players</h2>
           <p>Install the native Linux or Windows client and connect to any server on your network.</p>
 
-          <div class="download-pills">
-            <a class="pill-btn pill-solid" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage" target="_blank" rel="noopener">
-              <span>AppImage (Linux)</span>
-            </a>
-            <a class="pill-btn pill-tonal" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak" target="_blank" rel="noopener">
-              <span>Flatpak bundle</span>
-            </a>
-            <a class="pill-btn pill-tonal" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe" target="_blank" rel="noopener">
-              <span>Windows .exe</span>
-            </a>
+          <div class="player-tabs" role="tablist" aria-label="Launcher package format">
+            <button type="button" class="mode-pill is-active" role="tab" aria-selected="true" data-player="flatpak">Flatpak</button>
+            <button type="button" class="mode-pill" role="tab" aria-selected="false" data-player="appimage">Appimage</button>
+            <button type="button" class="mode-pill" role="tab" aria-selected="false" data-player="windows">Windows</button>
           </div>
 
           <div class="cmd-strip">
-            <code id="cmd-flatpak">curl -fSL https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak -o /tmp/opensync.flatpak &amp;&amp; flatpak install --user -y /tmp/opensync.flatpak &amp;&amp; flatpak run io.opensync.launcher</code>
-            <button type="button" class="copy-pill" data-copy="cmd-flatpak">Copy</button>
+            <code id="cmd-player">curl -fSL https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak -o /tmp/opensync.flatpak &amp;&amp; flatpak install --user -y /tmp/opensync.flatpak &amp;&amp; flatpak run io.opensync.launcher</code>
+            <button type="button" class="copy-pill" data-copy="cmd-player">Copy</button>
+          </div>
+
+          <div class="player-download-row">
+            <a class="pill-btn pill-solid pill-sm" id="download-player-link" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak" target="_blank" rel="noopener">
+              <span id="download-player-label">Download .flatpak</span>
+            </a>
           </div>
         </div>
 
