@@ -278,7 +278,7 @@
     );
   }
 
-  let activePlayerKey = 'flatpak';
+  let activePlayerKey = 'appimage';
   let recommendedPlayerKey = null;
   let userPickedPlayerTab = false;
 
@@ -290,7 +290,7 @@
   }
 
   function activatePlayerTab(key) {
-    const chosen = PLAYER_TARGETS[key] ? key : 'flatpak';
+    const chosen = PLAYER_TARGETS[key] ? key : 'appimage';
     activePlayerKey = chosen;
     document.querySelectorAll('.player-tabs .mode-pill').forEach((other) => {
       const active = other.dataset.player === chosen;
@@ -302,7 +302,7 @@
   }
 
   function syncPlayerCommand(activeKey) {
-    const entry = PLAYER_TARGETS[activeKey] || PLAYER_TARGETS.flatpak;
+    const entry = PLAYER_TARGETS[activeKey] || PLAYER_TARGETS.appimage;
     const codeEl = document.getElementById('cmd-player');
     if (codeEl) codeEl.textContent = entry.cmd(entry.url);
     document.querySelectorAll('.player-tabs .mode-pill').forEach((link) => {
@@ -354,18 +354,13 @@
       return armGpu === false ? 'macos-x64' : 'macos-arm64';
     }
     if (/win/i.test(plat)) return 'windows';
-    if (/linux|x11|wayland/i.test(plat)) return 'flatpak';
+    if (/linux|x11|wayland/i.test(plat)) return 'appimage';
     return null;
   }
 
   function applyRecommendation(key) {
     if (!key || !PLAYER_TARGETS[key]) return;
     recommendedPlayerKey = key;
-    const proposalEl = document.getElementById('platform-proposal');
-    if (proposalEl) {
-      proposalEl.textContent = PLAYER_TARGETS[key].proposal;
-      proposalEl.hidden = false;
-    }
     syncHeroLabel();
     if (!userPickedPlayerTab) {
       activatePlayerTab(key);
@@ -412,7 +407,7 @@
     }
   })();
 
-  syncPlayerCommand('flatpak');
+  syncPlayerCommand('appimage');
   detectRecommendedPlayer().then(applyRecommendation);
 
   document.querySelectorAll('.player-tabs .mode-pill').forEach((tab) => {
@@ -437,6 +432,11 @@
   const CONTRIBUTOR_REPOS = [
     'piskevalee-cpu/OpenSync',
     'piskevalee-cpu/OpenSync-Launcher',
+  ];
+  const FALLBACK_CONTRIBUTORS = [
+    { login: 'piskevalee-cpu', html_url: 'https://github.com/piskevalee-cpu', role: 'Maintainer' },
+    { login: 'macrocore-SoC', html_url: 'https://github.com/macrocore-SoC', role: 'macOS support' },
+    { login: 'wakitzinho', html_url: 'https://github.com/wakitzinho', role: 'Contributor' },
   ];
 
   async function loadContributors() {
@@ -464,6 +464,7 @@
           html_url: user.html_url || `https://github.com/${encodeURIComponent(user.login)}`,
           commits: 0,
           prs: 0,
+          role: '',
         };
         if (!existing.avatar_url && user.avatar_url) existing.avatar_url = user.avatar_url;
         if (countType === 'commits') existing.commits += count;
@@ -482,20 +483,24 @@
         }
       }
 
+      // If GitHub REST API is unauthenticated rate-limited (403), keep rendering live
+      // GitHub PFPs via github.com/<user>.png so contributors never disappear.
+      if (byLogin.size === 0) {
+        for (const fb of FALLBACK_CONTRIBUTORS) {
+          byLogin.set(fb.login.toLowerCase(), {
+            login: fb.login,
+            avatar_url: '',
+            html_url: fb.html_url,
+            commits: 0,
+            prs: 0,
+            role: fb.role,
+          });
+        }
+      }
+
       const contributors = [...byLogin.values()].sort(
         (a, b) => (b.commits - a.commits) || (b.prs - a.prs) || a.login.localeCompare(b.login),
       );
-      if (!contributors.length) {
-        grid.replaceChildren();
-        const link = document.createElement('a');
-        link.className = 'contributor-pill';
-        link.href = 'https://github.com/piskevalee-cpu/OpenSync/graphs/contributors';
-        link.target = '_blank';
-        link.rel = 'noopener';
-        link.textContent = 'View contributors on GitHub';
-        grid.appendChild(link);
-        return;
-      }
 
       grid.replaceChildren(
         ...contributors.map((c) => {
@@ -526,7 +531,9 @@
           count.className = 'contributor-count';
           count.textContent = c.commits > 0
             ? `${c.commits} ${c.commits === 1 ? 'commit' : 'commits'}`
-            : `${c.prs} merged ${c.prs === 1 ? 'PR' : 'PRs'}`;
+            : c.prs > 0
+              ? `${c.prs} merged ${c.prs === 1 ? 'PR' : 'PRs'}`
+              : (c.role || 'Contributor');
 
           info.append(name, count);
           pill.append(avatar, info);

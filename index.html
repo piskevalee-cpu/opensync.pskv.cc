@@ -98,66 +98,27 @@
 
         <div class="cabinet-frame-wrap">
           <div class="cabinet-halo" aria-hidden="true"></div>
-          <div class="cabinet-window" id="cabinet-window">
-            <div class="cw-top">
-              <div class="cw-brand">
-                <img src="assets/opensync-squares.png" alt="" width="20" height="20">
-                <span>Library</span>
+          <div class="cw-cards" id="cabinet-window">
+            <article class="game-tile" data-title="Hollow Knight&reg;" tabindex="0" aria-label="Hollow Knight">
+              <div class="tile-art">
+                <img src="assets/covers/hollow-knight.jpg" alt="Hollow Knight&reg;" class="tile-cover-img" loading="lazy">
+                <div class="tile-sheen" aria-hidden="true"></div>
               </div>
-              <div class="cw-status">
-                <span class="cw-badge" id="cw-state-pill"><i aria-hidden="true"></i> <span id="cw-state-text">LAN ready</span></span>
-                <span class="cw-user">valerio</span>
+            </article>
+
+            <article class="game-tile" data-title="Cyberpunk 2077&reg;" tabindex="0" aria-label="Cyberpunk 2077">
+              <div class="tile-art">
+                <img src="assets/covers/cyberpunk-2077.jpg" alt="Cyberpunk 2077&reg;" class="tile-cover-img" loading="lazy">
+                <div class="tile-sheen" aria-hidden="true"></div>
               </div>
-            </div>
+            </article>
 
-            <div class="cw-cards">
-              <article class="game-tile" data-title="Hollow Knight&reg;" tabindex="0">
-                <div class="tile-art">
-                  <img src="assets/covers/hollow-knight.jpg" alt="Hollow Knight&reg; cover" class="tile-cover-img" loading="lazy">
-                  <div class="tile-sheen" aria-hidden="true"></div>
-                </div>
-                <button type="button" class="tile-play" data-game="Hollow Knight&reg;" aria-label="Simulate playing Hollow Knight&reg;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <div class="tile-meta">
-                  <strong>Hollow Knight&reg;</strong>
-                  <span>2.84 GB · Native Linux</span>
-                </div>
-              </article>
-
-              <article class="game-tile" data-title="Cyberpunk 2077&reg;" tabindex="0">
-                <div class="tile-art">
-                  <img src="assets/covers/cyberpunk-2077.jpg" alt="Cyberpunk 2077&reg; cover" class="tile-cover-img" loading="lazy">
-                  <div class="tile-sheen" aria-hidden="true"></div>
-                </div>
-                <button type="button" class="tile-play" data-game="Cyberpunk 2077&reg;" aria-label="Simulate playing Cyberpunk 2077&reg;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <div class="tile-meta">
-                  <strong>Cyberpunk 2077&reg;</strong>
-                  <span>68.4 GB · Proton 9</span>
-                </div>
-              </article>
-
-              <article class="game-tile" data-title="Celeste&reg;" tabindex="0">
-                <div class="tile-art">
-                  <img src="assets/covers/celeste.jpg" alt="Celeste&reg; cover" class="tile-cover-img" loading="lazy">
-                  <div class="tile-sheen" aria-hidden="true"></div>
-                </div>
-                <button type="button" class="tile-play" data-game="Celeste&reg;" aria-label="Simulate playing Celeste&reg;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <div class="tile-meta">
-                  <strong>Celeste&reg;</strong>
-                  <span>1.18 GB · Offline queue</span>
-                </div>
-              </article>
-            </div>
-
-            <div class="cw-footer">
-              <span id="cw-footer-note">Hover a card or click Play to preview post-exit sync</span>
-              <span class="cw-metric" id="cw-metric">98.4 MB/s</span>
-            </div>
+            <article class="game-tile" data-title="Celeste&reg;" tabindex="0" aria-label="Celeste">
+              <div class="tile-art">
+                <img src="assets/covers/celeste.jpg" alt="Celeste&reg;" class="tile-cover-img" loading="lazy">
+                <div class="tile-sheen" aria-hidden="true"></div>
+              </div>
+            </article>
           </div>
         </div>
       </div>
@@ -232,14 +193,13 @@
           <span class="track-pill" id="launcher-release-pill">Desktop Launcher · v0.3.0</span>
           <h2>For players</h2>
           <p>Install the native Linux, macOS, or Windows client and connect to any server on your network.</p>
-          <p class="platform-proposal" id="platform-proposal" hidden></p>
 
           <div class="player-tabs" role="tablist" aria-label="Download latest launcher package">
-            <a class="pill-btn pill-tonal mode-pill is-active" role="tab" aria-selected="true" data-player="flatpak" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_amd64.flatpak" download>
-              <span>Flatpak</span>
-            </a>
-            <a class="pill-btn pill-tonal mode-pill" role="tab" aria-selected="false" data-player="appimage" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_amd64.AppImage" download>
+            <a class="pill-btn pill-tonal mode-pill is-active" role="tab" aria-selected="true" data-player="appimage" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_amd64.AppImage" download>
               <span>Appimage</span>
+            </a>
+            <a class="pill-btn pill-tonal mode-pill" role="tab" aria-selected="false" data-player="flatpak" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_amd64.flatpak" download>
+              <span>Flatpak</span>
             </a>
             <a class="pill-btn pill-tonal mode-pill" role="tab" aria-selected="false" data-player="windows" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_x64.exe" download>
               <span>Windows</span>
@@ -279,7 +239,6 @@
 
     <section class="section contributors-section" id="contributors" aria-labelledby="contributors-title">
       <div class="contributors-head">
-        <span class="track-pill">Open Source Community</span>
         <h2 class="section-title" id="contributors-title">Thank you to all contributors</h2>
         <p class="section-lead contributors-lead">OpenSync and OpenSync Launcher are built together with contributors improving self-hosted preservation across Linux, Windows, and macOS.</p>
       </div>
