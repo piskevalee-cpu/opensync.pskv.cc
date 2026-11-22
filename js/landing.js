@@ -22,34 +22,7 @@
     });
   }
 
-  // Interactive OpenSync Emblem (3D magnetic tilt + ripple pulse)
-  const emblem = document.getElementById('emblem-stage');
   let pulseBoost = 0;
-
-  if (emblem) {
-    emblem.addEventListener('pointermove', (e) => {
-      if (reducedMotion) return;
-      const rect = emblem.getBoundingClientRect();
-      const nx = (e.clientX - rect.left) / rect.width;
-      const ny = (e.clientY - rect.top) / rect.height;
-      emblem.style.setProperty('--erx', `${((0.5 - ny) * 18).toFixed(2)}deg`);
-      emblem.style.setProperty('--ery', `${((nx - 0.5) * 18).toFixed(2)}deg`);
-      emblem.style.setProperty('--egx', `${(nx * 100).toFixed(1)}%`);
-      emblem.style.setProperty('--egy', `${(ny * 100).toFixed(1)}%`);
-    });
-
-    emblem.addEventListener('pointerleave', () => {
-      emblem.style.removeProperty('--erx');
-      emblem.style.removeProperty('--ery');
-      emblem.style.removeProperty('--egx');
-      emblem.style.removeProperty('--egy');
-    });
-
-    emblem.addEventListener('click', () => {
-      pulseBoost = 1;
-      toast('OpenSync Server & Launcher v0.1.0');
-    });
-  }
 
   // Antigravity-inspired directional orbital particle field
   function initParticleCanvas(canvas, dense) {

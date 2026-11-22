@@ -14,9 +14,7 @@
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <a class="logo-link" href="#top" aria-label="OpenSync Home">
-        <img src="assets/opensync-nav-2x.png" alt="OpenSync" height="28">
-      </a>
+      <div class="topbar-spacer" aria-hidden="true"></div>
 
       <nav class="nav" aria-label="Primary">
         <a href="#cabinet">Launcher</a>
@@ -50,16 +48,9 @@
       <canvas class="particle-canvas" id="hero-particles" aria-hidden="true"></canvas>
 
       <div class="hero-inner">
-        <div class="emblem-stage" id="emblem-stage" tabindex="0" aria-label="Interactive OpenSync emblem">
-          <div class="emblem-ring" aria-hidden="true"></div>
-          <div class="emblem-card">
-            <img src="assets/icon.png" alt="" width="76" height="76" class="emblem-icon">
-            <img src="assets/opensync-squares.png" alt="" width="44" height="44" class="emblem-float" aria-hidden="true">
-            <div class="emblem-sheen" aria-hidden="true"></div>
-          </div>
+        <div class="hero-logo-lockup">
+          <img src="assets/opensync.png" alt="OpenSync" class="hero-repo-logo">
         </div>
-
-        <p class="hero-kicker">OpenSync Server &amp; Desktop Launcher</p>
 
         <h1 class="hero-title">Your offline games,<br>synced on your hardware.</h1>
 
@@ -110,73 +101,80 @@
             </div>
 
             <div class="cw-cards">
-              <article class="game-tile" data-title="Fogwoods" tabindex="0">
+              <article class="game-tile" data-title="Hollow Knight&reg;" tabindex="0">
                 <div class="tile-art tile-art-1">
                   <svg viewBox="0 0 240 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                     <defs>
-                      <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1d1c"/><stop offset="1" stop-color="#070a0b"/></linearGradient>
+                      <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1020"/><stop offset="1" stop-color="#05060b"/></linearGradient>
+                      <radialGradient id="hk" cx="50%" cy="42%" r="48%"><stop offset="0" stop-color="#8ab4ff" stop-opacity="0.22"/><stop offset="1" stop-color="#05060b" stop-opacity="0"/></radialGradient>
                     </defs>
                     <rect width="240" height="360" fill="url(#g1)"/>
-                    <circle cx="124" cy="126" r="28" fill="#c9ffd6" opacity="0.82"/>
-                    <path d="M0 240 L60 175 L120 212 L180 158 L240 205 L240 360 L0 360 Z" fill="#0e1a1a"/>
-                    <path d="M0 285 L85 232 L175 268 L240 228 L240 360 L0 360 Z" fill="#091011"/>
+                    <rect width="240" height="360" fill="url(#hk)"/>
+                    <path d="M96 140 C92 108 82 96 76 86 C88 94 100 108 106 126 C114 124 126 124 134 126 C140 108 152 94 164 86 C158 96 148 108 144 140 C150 158 144 180 120 184 C96 180 90 158 96 140 Z" fill="#e8eefc" opacity="0.9"/>
+                    <circle cx="108" cy="156" r="6" fill="#090c14"/>
+                    <circle cx="132" cy="156" r="6" fill="#090c14"/>
+                    <path d="M0 280 Q120 248 240 280 L240 360 L0 360 Z" fill="#090d18"/>
                   </svg>
                   <div class="tile-sheen"></div>
                 </div>
                 <span class="tile-chip">Synced</span>
-                <button type="button" class="tile-play" data-game="Fogwoods" aria-label="Simulate playing Fogwoods">
+                <button type="button" class="tile-play" data-game="Hollow Knight&reg;" aria-label="Simulate playing Hollow Knight&reg;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
                 <div class="tile-meta">
-                  <strong>Fogwoods</strong>
-                  <span>1.84 GB · Native Linux</span>
+                  <strong>Hollow Knight&reg;</strong>
+                  <span>2.84 GB · Native Linux</span>
                 </div>
               </article>
 
-              <article class="game-tile" data-title="Cyber Runner 2077" tabindex="0">
+              <article class="game-tile" data-title="Cyberpunk 2077&reg;" tabindex="0">
                 <div class="tile-art tile-art-2">
                   <svg viewBox="0 0 240 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                     <defs>
-                      <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#170f28"/><stop offset="1" stop-color="#080910"/></linearGradient>
+                      <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e1708"/><stop offset="0.55" stop-color="#170b1e"/><stop offset="1" stop-color="#07080d"/></linearGradient>
                     </defs>
                     <rect width="240" height="360" fill="url(#g2)"/>
-                    <circle cx="170" cy="96" r="54" fill="#ff5ca1" opacity="0.16"/>
-                    <rect x="20" y="150" width="38" height="210" fill="#0c0b16"/>
-                    <rect x="66" y="122" width="42" height="238" fill="#0c0b16"/>
-                    <rect x="116" y="102" width="46" height="258" fill="#0c0b16"/>
-                    <rect x="170" y="138" width="50" height="222" fill="#0c0b16"/>
-                    <line x1="0" y1="248" x2="240" y2="214" stroke="#7dfa9b" stroke-width="1.6" opacity="0.72"/>
+                    <circle cx="168" cy="96" r="62" fill="#fcee09" opacity="0.16"/>
+                    <rect x="20" y="150" width="38" height="210" fill="#0b0b12"/>
+                    <rect x="66" y="122" width="42" height="238" fill="#0b0b12"/>
+                    <rect x="116" y="102" width="46" height="258" fill="#0b0b12"/>
+                    <rect x="170" y="138" width="50" height="222" fill="#0b0b12"/>
+                    <line x1="0" y1="248" x2="240" y2="214" stroke="#fcee09" stroke-width="1.8" opacity="0.82"/>
+                    <line x1="0" y1="262" x2="240" y2="228" stroke="#00f0ff" stroke-width="1.2" opacity="0.65"/>
                   </svg>
                   <div class="tile-sheen"></div>
                 </div>
                 <span class="tile-chip chip-blue">GE-Proton</span>
-                <button type="button" class="tile-play" data-game="Cyber Runner 2077" aria-label="Simulate playing Cyber Runner 2077">
+                <button type="button" class="tile-play" data-game="Cyberpunk 2077&reg;" aria-label="Simulate playing Cyberpunk 2077&reg;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
                 <div class="tile-meta">
-                  <strong>Cyber Runner 2077</strong>
-                  <span>28.6 GB · Proton 9</span>
+                  <strong>Cyberpunk 2077&reg;</strong>
+                  <span>68.4 GB · Proton 9</span>
                 </div>
               </article>
 
-              <article class="game-tile" data-title="Hollow Spire" tabindex="0">
+              <article class="game-tile" data-title="Celeste&reg;" tabindex="0">
                 <div class="tile-art tile-art-3">
                   <svg viewBox="0 0 240 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                    <rect width="240" height="360" fill="#10131d"/>
-                    <circle cx="120" cy="130" r="38" fill="#e6f2ff" opacity="0.86"/>
-                    <circle cx="134" cy="120" r="34" fill="#10131d"/>
-                    <path d="M96 360 L110 148 L120 96 L130 148 L144 360 Z" fill="#090b10"/>
-                    <circle cx="120" cy="176" r="4.5" fill="#74b8ff"/>
+                    <defs>
+                      <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#191638"/><stop offset="0.6" stop-color="#261f47"/><stop offset="1" stop-color="#0a0b12"/></linearGradient>
+                    </defs>
+                    <rect width="240" height="360" fill="url(#g3)"/>
+                    <circle cx="164" cy="96" r="24" fill="#d9e8ff" opacity="0.82"/>
+                    <path d="M0 360 L66 205 L118 118 L172 212 L240 165 L240 360 Z" fill="#11152a"/>
+                    <path d="M98 152 L118 118 L138 152 L126 146 L118 160 L108 146 Z" fill="#dbeaff" opacity="0.88"/>
+                    <circle cx="118" cy="100" r="5" fill="#ff4d6d"/>
                   </svg>
                   <div class="tile-sheen"></div>
                 </div>
                 <span class="tile-chip chip-amber">1 queued</span>
-                <button type="button" class="tile-play" data-game="Hollow Spire" aria-label="Simulate playing Hollow Spire">
+                <button type="button" class="tile-play" data-game="Celeste&reg;" aria-label="Simulate playing Celeste&reg;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
                 <div class="tile-meta">
-                  <strong>Hollow Spire</strong>
-                  <span>4.12 GB · Offline queue</span>
+                  <strong>Celeste&reg;</strong>
+                  <span>1.18 GB · Offline queue</span>
                 </div>
               </article>
             </div>

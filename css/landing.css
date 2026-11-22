@@ -75,31 +75,20 @@ button {
   margin: 0 auto;
   height: 60px;
   padding: 0 28px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  gap: 16px;
 }
 
-.logo-link {
-  display: inline-flex;
-  align-items: center;
-  transition: opacity 0.2s var(--ease);
-}
-
-.logo-link:hover {
-  opacity: 0.84;
-}
-
-.logo-link img {
-  display: block;
-  height: 28px;
-  width: auto;
+.topbar-spacer {
+  min-width: 0;
 }
 
 .nav {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
 }
 
@@ -120,6 +109,7 @@ button {
 .topbar-actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
 }
 
@@ -302,98 +292,19 @@ button {
   align-items: center;
 }
 
-.emblem-stage {
-  position: relative;
-  width: 112px;
-  height: 112px;
+.hero-logo-lockup {
   margin-bottom: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 800px;
-  cursor: pointer;
+  pointer-events: none;
+  user-select: none;
 }
 
-.emblem-ring {
-  position: absolute;
-  inset: -6px;
-  border-radius: 32px;
-  background: conic-gradient(from var(--spin, 0deg), rgba(125, 250, 155, 0.55), rgba(116, 184, 255, 0.45), rgba(255, 209, 102, 0.2), rgba(125, 250, 155, 0.55));
-  filter: blur(14px);
-  opacity: 0.35;
-  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
-  animation: slowSpin 12s linear infinite;
-}
-
-@keyframes slowSpin {
-  to { transform: rotate(360deg); }
-}
-
-.emblem-stage:hover .emblem-ring,
-.emblem-stage:focus-visible .emblem-ring {
-  opacity: 0.85;
-  transform: scale(1.1);
-}
-
-.emblem-card {
-  position: relative;
-  width: 96px;
-  height: 96px;
-  border-radius: 26px;
-  background: linear-gradient(155deg, rgba(28, 32, 42, 0.94), rgba(13, 15, 20, 0.96));
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.65);
-  transform-style: preserve-3d;
-  transform: rotateX(var(--erx, 0deg)) rotateY(var(--ery, 0deg));
-  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
-  overflow: hidden;
-}
-
-.emblem-stage:hover .emblem-card {
-  border-color: rgba(125, 250, 155, 0.48);
-  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.72), 0 0 28px rgba(125, 250, 155, 0.15);
-}
-
-.emblem-icon {
+.hero-repo-logo {
   display: block;
-  border-radius: 16px;
-  transition: transform 0.28s var(--ease), opacity 0.28s var(--ease);
-  transform: translateZ(18px);
-}
-
-.emblem-float {
-  position: absolute;
-  opacity: 0;
-  transform: translateZ(34px) scale(0.75) rotate(-10deg);
-  transition: transform 0.32s var(--ease), opacity 0.28s var(--ease);
-  pointer-events: none;
-  filter: drop-shadow(0 6px 14px rgba(125, 250, 155, 0.45));
-}
-
-.emblem-stage:hover .emblem-icon {
-  opacity: 0.18;
-  transform: translateZ(6px) scale(0.92);
-}
-
-.emblem-stage:hover .emblem-float {
-  opacity: 1;
-  transform: translateZ(34px) scale(1.12) rotate(0deg);
-}
-
-.emblem-sheen {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at var(--egx, 30%) var(--egy, 25%), rgba(255, 255, 255, 0.22), transparent 58%);
-  opacity: 0;
-  transition: opacity 0.24s ease;
-  pointer-events: none;
-}
-
-.emblem-stage:hover .emblem-sheen {
-  opacity: 1;
+  width: min(300px, 68vw);
+  height: auto;
 }
 
 .hero-kicker {
@@ -1100,8 +1011,10 @@ button {
 }
 
 @media (max-width: 680px) {
-  .topbar-inner { padding: 0 16px; }
-  .nav { display: none; }
+  .topbar-inner { padding: 0 14px; grid-template-columns: 1fr auto; gap: 8px; }
+  .topbar-spacer { display: none; }
+  .nav { justify-content: flex-start; gap: 2px; }
+  .nav a { padding: 6px 10px; font-size: 13px; }
   .announce-text { font-size: 12px; }
   .hero { padding: 48px 16px 56px; min-height: 0; }
   .section { padding: 48px 16px; }
@@ -1112,7 +1025,6 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .emblem-ring { animation: none; }
   *, *::before, *::after {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
