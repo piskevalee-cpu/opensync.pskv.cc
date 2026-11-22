@@ -229,6 +229,7 @@
 
   // Fetch latest release assets from GitHub (fallback to v0.2.0 if offline/rate-limited)
   const LATEST_RELEASE_API = 'https://api.github.com/repos/piskevalee-cpu/OpenSync-Launcher/releases/latest';
+  const RELEASES_LIST_API = 'https://api.github.com/repos/piskevalee-cpu/OpenSync-Launcher/releases?per_page=5';
   const PLAYER_TARGETS = {
     flatpak: {
       ext: '.flatpak',
@@ -247,6 +248,14 @@
     },
   };
 
+  function hasPackageAssets(release) {
+    const assets = Array.isArray(release?.assets) ? release.assets : [];
+    const exts = Object.values(PLAYER_TARGETS).map((t) => t.ext);
+    return assets.some(
+      (a) => typeof a.name === 'string' && !a.name.endsWith('.sha256') && exts.some((ext) => a.name.endsWith(ext)),
+    );
+  }
+
   function syncPlayerCommand(activeKey) {
     const entry = PLAYER_TARGETS[activeKey] || PLAYER_TARGETS.flatpak;
     const codeEl = document.getElementById('cmd-player');
@@ -262,7 +271,15 @@
     try {
       const res = await fetch(LATEST_RELEASE_API, { headers: { Accept: 'application/vnd.github+json' } });
       if (!res.ok) return;
-      const release = await res.json();
+      let release = await res.json();
+      if (!hasPackageAssets(release)) {
+        const listRes = await fetch(RELEASES_LIST_API, { headers: { Accept: 'application/vnd.github+json' } });
+        if (listRes.ok) {
+          const all = await listRes.json();
+          const populated = Array.isArray(all) ? all.find((r) => !r.draft && hasPackageAssets(r)) : null;
+          if (populated) release = populated;
+        }
+      }
       const assets = Array.isArray(release.assets) ? release.assets : [];
       for (const target of Object.values(PLAYER_TARGETS)) {
         const match = assets.find((a) => typeof a.name === 'string' && a.name.endsWith(target.ext) && !a.name.endsWith('.sha256') && a.browser_download_url);

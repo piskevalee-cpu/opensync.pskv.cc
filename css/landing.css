@@ -380,8 +380,10 @@ button {
 .mode-pills,
 .player-tabs,
 .server-tabs {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 12px;
   margin-bottom: 20px;
 }
