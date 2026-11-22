@@ -227,23 +227,25 @@
     });
   });
 
-  // Fetch latest release assets from GitHub (fallback to v0.2.0 if offline/rate-limited)
+  // Fetch latest release assets from GitHub (fallback to DEFAULT_RELEASE_TAG if offline/rate-limited)
+  const DEFAULT_RELEASE_TAG = 'v0.3.0';
+  let activeReleaseTag = DEFAULT_RELEASE_TAG;
   const LATEST_RELEASE_API = 'https://api.github.com/repos/piskevalee-cpu/OpenSync-Launcher/releases/latest';
   const RELEASES_LIST_API = 'https://api.github.com/repos/piskevalee-cpu/OpenSync-Launcher/releases?per_page=5';
   const PLAYER_TARGETS = {
     flatpak: {
       ext: '.flatpak',
-      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.2.0/OpenSync_Launcher_0.2.0_amd64.flatpak',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_amd64.flatpak',
       cmd: (url) => `curl -fSL ${url} -o /tmp/opensync.flatpak && flatpak install --user -y /tmp/opensync.flatpak && flatpak run io.opensync.launcher`,
     },
     appimage: {
       ext: '.AppImage',
-      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.2.0/OpenSync_Launcher_0.2.0_amd64.AppImage',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_amd64.AppImage',
       cmd: (url) => `curl -fSL ${url} -o OpenSync_Launcher.AppImage && chmod +x OpenSync_Launcher.AppImage && ./OpenSync_Launcher.AppImage`,
     },
     windows: {
       ext: '.exe',
-      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.2.0/OpenSync_Launcher_0.2.0_x64.exe',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_x64.exe',
       cmd: (url) => `irm ${url} -OutFile OpenSync_Launcher.exe; .\\OpenSync_Launcher.exe`,
     },
   };
@@ -286,6 +288,7 @@
         if (match) target.url = match.browser_download_url;
       }
       if (release.tag_name) {
+        activeReleaseTag = release.tag_name;
         const badge = document.getElementById('launcher-release-pill');
         if (badge) badge.textContent = `Desktop Launcher · ${release.tag_name}`;
         const announceTag = document.getElementById('announce-tag');
@@ -352,7 +355,7 @@
   document.querySelectorAll('.feature-card').forEach((card) => {
     card.addEventListener('click', () => {
       const heading = card.querySelector('h3')?.textContent || 'Feature';
-      toast(`${heading} — built into OpenSync v0.1.0`);
+      toast(`${heading} — built into OpenSync ${activeReleaseTag}`);
     });
   });
 
