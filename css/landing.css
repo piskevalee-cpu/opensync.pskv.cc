@@ -382,12 +382,15 @@ button {
 .server-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
-.player-download-row {
-  margin-top: 12px;
+.player-tabs .mode-pill,
+.server-tabs .mode-pill {
+  min-height: 36px;
+  padding: 7px 16px;
+  font-size: 13.5px;
 }
 
 .mode-pill {

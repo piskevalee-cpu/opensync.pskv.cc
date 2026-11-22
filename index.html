@@ -3,9 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OpenSync — Self-hosted game library and automatic save sync</title>
+  <title>Opensync - own your games</title>
   <meta name="description" content="Self-hosted game archive server and native desktop launcher with wire-speed streaming extraction and automatic differential save sync.">
-  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <meta property="og:title" content="Opensync - own your games">
+  <meta property="og:description" content="Your offline games, synced on your hardware. Store games as plain directories and sync every save diff per player automatically.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://opensync.pskv.cc/">
+  <meta property="og:image" content="https://opensync.pskv.cc/assets/og-preview.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Opensync - own your games">
+  <meta name="twitter:description" content="Your offline games, synced on your hardware.">
+  <meta name="twitter:image" content="https://opensync.pskv.cc/assets/og-preview.jpg">
+  <link rel="icon" type="image/png" href="assets/opensync-squares.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -219,25 +229,25 @@
 
       <div class="dual-install">
         <div class="install-track">
-          <span class="track-pill">Desktop Launcher · v0.1.0</span>
+          <span class="track-pill" id="launcher-release-pill">Desktop Launcher · Latest release</span>
           <h2>For players</h2>
           <p>Install the native Linux or Windows client and connect to any server on your network.</p>
 
-          <div class="player-tabs" role="tablist" aria-label="Launcher package format">
-            <button type="button" class="mode-pill is-active" role="tab" aria-selected="true" data-player="flatpak">Flatpak</button>
-            <button type="button" class="mode-pill" role="tab" aria-selected="false" data-player="appimage">Appimage</button>
-            <button type="button" class="mode-pill" role="tab" aria-selected="false" data-player="windows">Windows</button>
+          <div class="player-tabs" role="tablist" aria-label="Download latest launcher package">
+            <a class="pill-btn pill-tonal mode-pill is-active" role="tab" aria-selected="true" data-player="flatpak" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak" download>
+              <span>Flatpak</span>
+            </a>
+            <a class="pill-btn pill-tonal mode-pill" role="tab" aria-selected="false" data-player="appimage" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage" download>
+              <span>Appimage</span>
+            </a>
+            <a class="pill-btn pill-tonal mode-pill" role="tab" aria-selected="false" data-player="windows" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe" download>
+              <span>Windows</span>
+            </a>
           </div>
 
           <div class="cmd-strip">
             <code id="cmd-player">curl -fSL https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak -o /tmp/opensync.flatpak &amp;&amp; flatpak install --user -y /tmp/opensync.flatpak &amp;&amp; flatpak run io.opensync.launcher</code>
             <button type="button" class="copy-pill" data-copy="cmd-player">Copy</button>
-          </div>
-
-          <div class="player-download-row">
-            <a class="pill-btn pill-solid pill-sm" id="download-player-link" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak" target="_blank" rel="noopener">
-              <span id="download-player-label">Download .flatpak</span>
-            </a>
           </div>
         </div>
 

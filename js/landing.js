@@ -227,39 +227,78 @@
     });
   });
 
-  // Player package switcher in Install section
+  // Fetch latest release assets from GitHub (fallback to v0.1.0 if offline/rate-limited)
+  const LATEST_RELEASE_API = 'https://api.github.com/repos/piskevalee-cpu/OpenSync-Launcher/releases/latest';
   const PLAYER_TARGETS = {
     flatpak: {
-      cmd: 'curl -fSL https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak -o /tmp/opensync.flatpak && flatpak install --user -y /tmp/opensync.flatpak && flatpak run io.opensync.launcher',
-      href: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak',
-      label: 'Download .flatpak',
+      ext: '.flatpak',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak',
+      cmd: (url) => `curl -fSL ${url} -o /tmp/opensync.flatpak && flatpak install --user -y /tmp/opensync.flatpak && flatpak run io.opensync.launcher`,
     },
     appimage: {
-      cmd: 'curl -fSL https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage -o OpenSync_Launcher.AppImage && chmod +x OpenSync_Launcher.AppImage && ./OpenSync_Launcher.AppImage',
-      href: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage',
-      label: 'Download .AppImage',
+      ext: '.AppImage',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage',
+      cmd: (url) => `curl -fSL ${url} -o OpenSync_Launcher.AppImage && chmod +x OpenSync_Launcher.AppImage && ./OpenSync_Launcher.AppImage`,
     },
     windows: {
-      cmd: 'irm https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe -OutFile OpenSync_Launcher.exe; .\\OpenSync_Launcher.exe',
-      href: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe',
-      label: 'Download .exe',
+      ext: '.exe',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe',
+      cmd: (url) => `irm ${url} -OutFile OpenSync_Launcher.exe; .\\OpenSync_Launcher.exe`,
     },
   };
 
+  function syncPlayerCommand(activeKey) {
+    const entry = PLAYER_TARGETS[activeKey] || PLAYER_TARGETS.flatpak;
+    const codeEl = document.getElementById('cmd-player');
+    if (codeEl) codeEl.textContent = entry.cmd(entry.url);
+    document.querySelectorAll('.player-tabs .mode-pill').forEach((link) => {
+      const target = PLAYER_TARGETS[link.dataset.player];
+      if (target) link.href = target.url;
+    });
+  }
+
+  let latestResolved = false;
+  const resolveLatestRelease = (async () => {
+    try {
+      const res = await fetch(LATEST_RELEASE_API, { headers: { Accept: 'application/vnd.github+json' } });
+      if (!res.ok) return;
+      const release = await res.json();
+      const assets = Array.isArray(release.assets) ? release.assets : [];
+      for (const target of Object.values(PLAYER_TARGETS)) {
+        const match = assets.find((a) => typeof a.name === 'string' && a.name.endsWith(target.ext) && !a.name.endsWith('.sha256') && a.browser_download_url);
+        if (match) target.url = match.browser_download_url;
+      }
+      const badge = document.getElementById('launcher-release-pill');
+      if (badge && release.tag_name) badge.textContent = `Desktop Launcher · ${release.tag_name}`;
+      latestResolved = true;
+      const active = document.querySelector('.player-tabs .mode-pill.is-active');
+      syncPlayerCommand(active?.dataset.player || 'flatpak');
+    } catch (_) {
+      /* fallback URLs already configured */
+    }
+  })();
+
+  syncPlayerCommand('flatpak');
+
   document.querySelectorAll('.player-tabs .mode-pill').forEach((tab) => {
-    tab.addEventListener('click', () => {
+    tab.addEventListener('click', async (e) => {
+      e.preventDefault();
       document.querySelectorAll('.player-tabs .mode-pill').forEach((other) => {
         const active = other === tab;
         other.classList.toggle('is-active', active);
         other.setAttribute('aria-selected', String(active));
       });
-      const entry = PLAYER_TARGETS[tab.dataset.player] || PLAYER_TARGETS.flatpak;
-      const codeEl = document.getElementById('cmd-player');
-      const dlLink = document.getElementById('download-player-link');
-      const dlLabel = document.getElementById('download-player-label');
-      if (codeEl) codeEl.textContent = entry.cmd;
-      if (dlLink) dlLink.href = entry.href;
-      if (dlLabel) dlLabel.textContent = entry.label;
+      const key = tab.dataset.player || 'flatpak';
+      syncPlayerCommand(key);
+      if (!latestResolved) await resolveLatestRelease;
+      const target = PLAYER_TARGETS[key] || PLAYER_TARGETS.flatpak;
+      const a = document.createElement('a');
+      a.href = target.url;
+      a.download = '';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     });
   });
 
