@@ -234,28 +234,71 @@
   const RELEASES_LIST_API = 'https://api.github.com/repos/piskevalee-cpu/OpenSync-Launcher/releases?per_page=5';
   const PLAYER_TARGETS = {
     flatpak: {
-      ext: '.flatpak',
+      suffix: 'amd64.flatpak',
+      heroLabel: 'Download for Linux',
+      proposal: 'Detected Linux · Flatpak recommended (Appimage also available)',
       url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_amd64.flatpak',
       cmd: (url) => `curl -fSL ${url} -o /tmp/opensync.flatpak && flatpak install --user -y /tmp/opensync.flatpak && flatpak run io.opensync.launcher`,
     },
     appimage: {
-      ext: '.AppImage',
+      suffix: 'amd64.AppImage',
+      heroLabel: 'Download for Linux',
+      proposal: 'Detected Linux · Portable AppImage',
       url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_amd64.AppImage',
       cmd: (url) => `curl -fSL ${url} -o OpenSync_Launcher.AppImage && chmod +x OpenSync_Launcher.AppImage && ./OpenSync_Launcher.AppImage`,
     },
     windows: {
-      ext: '.exe',
+      suffix: 'x64.exe',
+      heroLabel: 'Download for Windows',
+      proposal: 'Detected Windows · x64 installer recommended',
       url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_x64.exe',
       cmd: (url) => `irm ${url} -OutFile OpenSync_Launcher.exe; .\\OpenSync_Launcher.exe`,
+    },
+    'macos-arm64': {
+      suffix: 'aarch64.dmg',
+      heroLabel: 'Download for macOS',
+      proposal: 'Detected macOS (Apple Silicon) · .dmg recommended',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_aarch64.dmg',
+      cmd: (url) => `curl -fSL ${url} -o ~/Downloads/OpenSync_Launcher.dmg && open ~/Downloads/OpenSync_Launcher.dmg`,
+    },
+    'macos-x64': {
+      suffix: 'x86_64.dmg',
+      heroLabel: 'Download for macOS (Intel)',
+      proposal: 'Detected macOS (Intel) · .dmg recommended',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_x86_64.dmg',
+      cmd: (url) => `curl -fSL ${url} -o ~/Downloads/OpenSync_Launcher.dmg && open ~/Downloads/OpenSync_Launcher.dmg`,
     },
   };
 
   function hasPackageAssets(release) {
     const assets = Array.isArray(release?.assets) ? release.assets : [];
-    const exts = Object.values(PLAYER_TARGETS).map((t) => t.ext);
+    const suffixes = Object.values(PLAYER_TARGETS).map((t) => t.suffix);
     return assets.some(
-      (a) => typeof a.name === 'string' && !a.name.endsWith('.sha256') && exts.some((ext) => a.name.endsWith(ext)),
+      (a) => typeof a.name === 'string' && !a.name.endsWith('.sha256') && suffixes.some((sfx) => a.name.endsWith(sfx)),
     );
+  }
+
+  let activePlayerKey = 'flatpak';
+  let recommendedPlayerKey = null;
+  let userPickedPlayerTab = false;
+
+  function syncHeroLabel() {
+    const heroLabel = document.getElementById('hero-download-label');
+    if (!heroLabel) return;
+    const rec = recommendedPlayerKey ? PLAYER_TARGETS[recommendedPlayerKey] : null;
+    heroLabel.textContent = rec ? `${rec.heroLabel} · ${activeReleaseTag}` : `Download ${activeReleaseTag}`;
+  }
+
+  function activatePlayerTab(key) {
+    const chosen = PLAYER_TARGETS[key] ? key : 'flatpak';
+    activePlayerKey = chosen;
+    document.querySelectorAll('.player-tabs .mode-pill').forEach((other) => {
+      const active = other.dataset.player === chosen;
+      other.classList.toggle('is-active', active);
+      other.setAttribute('aria-selected', String(active));
+      other.classList.toggle('is-recommended', Boolean(recommendedPlayerKey && other.dataset.player === recommendedPlayerKey));
+    });
+    syncPlayerCommand(chosen);
   }
 
   function syncPlayerCommand(activeKey) {
@@ -266,6 +309,69 @@
       const target = PLAYER_TARGETS[link.dataset.player];
       if (target) link.href = target.url;
     });
+  }
+
+  function detectMacArmGpuHint() {
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) return null;
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      const renderer = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '') : '';
+      if (/Apple M\d|Apple GPU/i.test(renderer)) return true;
+      if (/Intel|AMD Radeon/i.test(renderer)) return false;
+    } catch (_) {
+      /* ignore WebGL restriction */
+    }
+    return null;
+  }
+
+  async function detectRecommendedPlayer() {
+    let osHint = '';
+    let archHint = '';
+
+    try {
+      if (navigator.userAgentData?.getHighEntropyValues) {
+        const high = await navigator.userAgentData.getHighEntropyValues(['architecture', 'platform']);
+        osHint = String(high.platform || navigator.userAgentData.platform || '');
+        archHint = String(high.architecture || '');
+      } else if (navigator.userAgentData?.platform) {
+        osHint = String(navigator.userAgentData.platform);
+      }
+    } catch (_) {
+      /* fall back to navigator.platform / userAgent */
+    }
+
+    const ua = String(navigator.userAgent || '');
+    const plat = `${osHint} ${navigator.platform || ''} ${ua}`;
+    const isAndroidOrIOS = /Android|iPhone|iPad|iPod/i.test(ua);
+
+    if (isAndroidOrIOS) return null;
+    if (/mac|darwin/i.test(plat)) {
+      if (/arm/i.test(archHint)) return 'macos-arm64';
+      if (/x86/i.test(archHint)) return 'macos-x64';
+      const armGpu = detectMacArmGpuHint();
+      return armGpu === false ? 'macos-x64' : 'macos-arm64';
+    }
+    if (/win/i.test(plat)) return 'windows';
+    if (/linux|x11|wayland/i.test(plat)) return 'flatpak';
+    return null;
+  }
+
+  function applyRecommendation(key) {
+    if (!key || !PLAYER_TARGETS[key]) return;
+    recommendedPlayerKey = key;
+    const proposalEl = document.getElementById('platform-proposal');
+    if (proposalEl) {
+      proposalEl.textContent = PLAYER_TARGETS[key].proposal;
+      proposalEl.hidden = false;
+    }
+    syncHeroLabel();
+    if (!userPickedPlayerTab) {
+      activatePlayerTab(key);
+    } else {
+      activatePlayerTab(activePlayerKey);
+    }
   }
 
   let latestResolved = false;
@@ -284,7 +390,7 @@
       }
       const assets = Array.isArray(release.assets) ? release.assets : [];
       for (const target of Object.values(PLAYER_TARGETS)) {
-        const match = assets.find((a) => typeof a.name === 'string' && a.name.endsWith(target.ext) && !a.name.endsWith('.sha256') && a.browser_download_url);
+        const match = assets.find((a) => typeof a.name === 'string' && a.name.endsWith(target.suffix) && !a.name.endsWith('.sha256') && a.browser_download_url);
         if (match) target.url = match.browser_download_url;
       }
       if (release.tag_name) {
@@ -293,33 +399,28 @@
         if (badge) badge.textContent = `Desktop Launcher · ${release.tag_name}`;
         const announceTag = document.getElementById('announce-tag');
         if (announceTag) announceTag.textContent = release.tag_name;
-        const heroLabel = document.getElementById('hero-download-label');
-        if (heroLabel) heroLabel.textContent = `Download ${release.tag_name}`;
+        syncHeroLabel();
         const footerLabel = document.getElementById('footer-releases-label');
         if (footerLabel) footerLabel.textContent = `${release.tag_name} releases`;
       }
       const footerLink = document.getElementById('footer-releases-link');
       if (footerLink && release.html_url) footerLink.href = release.html_url;
       latestResolved = true;
-      const active = document.querySelector('.player-tabs .mode-pill.is-active');
-      syncPlayerCommand(active?.dataset.player || 'flatpak');
+      syncPlayerCommand(activePlayerKey);
     } catch (_) {
       /* fallback URLs already configured */
     }
   })();
 
   syncPlayerCommand('flatpak');
+  detectRecommendedPlayer().then(applyRecommendation);
 
   document.querySelectorAll('.player-tabs .mode-pill').forEach((tab) => {
     tab.addEventListener('click', async (e) => {
       e.preventDefault();
-      document.querySelectorAll('.player-tabs .mode-pill').forEach((other) => {
-        const active = other === tab;
-        other.classList.toggle('is-active', active);
-        other.setAttribute('aria-selected', String(active));
-      });
+      userPickedPlayerTab = true;
       const key = tab.dataset.player || 'flatpak';
-      syncPlayerCommand(key);
+      activatePlayerTab(key);
       if (!latestResolved) await resolveLatestRelease;
       const target = PLAYER_TARGETS[key] || PLAYER_TARGETS.flatpak;
       const a = document.createElement('a');
@@ -331,6 +432,101 @@
       a.remove();
     });
   });
+
+  // Real-time GitHub contributors showcase (avatars + profiles across OpenSync & OpenSync-Launcher)
+  const CONTRIBUTOR_REPOS = [
+    'https://api.github.com/repos/piskevalee-cpu/OpenSync/contributors?per_page=100',
+    'https://api.github.com/repos/piskevalee-cpu/OpenSync-Launcher/contributors?per_page=100',
+  ];
+
+  async function loadContributors() {
+    const grid = document.getElementById('contributors-grid');
+    if (!grid) return;
+    try {
+      const results = await Promise.all(
+        CONTRIBUTOR_REPOS.map((url) =>
+          fetch(url, {
+            cache: 'no-store',
+            headers: { Accept: 'application/vnd.github+json' },
+          }).then((r) => (r.ok ? r.json() : [])).catch(() => []),
+        ),
+      );
+
+      const byLogin = new Map();
+      for (const list of results) {
+        if (!Array.isArray(list)) continue;
+        for (const item of list) {
+          if (!item || item.type === 'Bot' || !item.login) continue;
+          const key = item.login.toLowerCase();
+          const existing = byLogin.get(key);
+          if (existing) {
+            existing.contributions += Number(item.contributions || 0);
+            if (!existing.avatar_url && item.avatar_url) existing.avatar_url = item.avatar_url;
+          } else {
+            byLogin.set(key, {
+              login: item.login,
+              avatar_url: item.avatar_url || '',
+              html_url: item.html_url || `https://github.com/${encodeURIComponent(item.login)}`,
+              contributions: Number(item.contributions || 0),
+            });
+          }
+        }
+      }
+
+      const contributors = [...byLogin.values()].sort((a, b) => b.contributions - a.contributions);
+      if (!contributors.length) {
+        grid.replaceChildren();
+        const link = document.createElement('a');
+        link.className = 'contributor-pill';
+        link.href = 'https://github.com/piskevalee-cpu/OpenSync/graphs/contributors';
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = 'View contributors on GitHub';
+        grid.appendChild(link);
+        return;
+      }
+
+      grid.replaceChildren(
+        ...contributors.map((c) => {
+          const pill = document.createElement('a');
+          pill.className = 'contributor-pill';
+          pill.href = c.html_url;
+          pill.target = '_blank';
+          pill.rel = 'noopener';
+
+          const avatar = document.createElement('img');
+          avatar.className = 'contributor-avatar';
+          const sep = c.avatar_url.includes('?') ? '&' : '?';
+          avatar.src = c.avatar_url ? `${c.avatar_url}${sep}s=96` : `https://github.com/${encodeURIComponent(c.login)}.png?size=96`;
+          avatar.alt = `${c.login} avatar`;
+          avatar.width = 40;
+          avatar.height = 40;
+          avatar.loading = 'lazy';
+          avatar.decoding = 'async';
+
+          const info = document.createElement('span');
+          info.className = 'contributor-info';
+
+          const name = document.createElement('span');
+          name.className = 'contributor-name';
+          name.textContent = `@${c.login}`;
+
+          const count = document.createElement('span');
+          count.className = 'contributor-count';
+          count.textContent = `${c.contributions} ${c.contributions === 1 ? 'commit' : 'commits'}`;
+
+          info.append(name, count);
+          pill.append(avatar, info);
+          return pill;
+        }),
+      );
+    } catch (_) {
+      const statusEl = document.getElementById('contributors-status');
+      if (statusEl) statusEl.textContent = 'View contributors on GitHub.';
+    }
+  }
+
+  loadContributors();
 
   // Server command switcher in Install section
   const SERVER_CMDS = {

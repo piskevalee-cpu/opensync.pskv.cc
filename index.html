@@ -46,7 +46,7 @@
     <div class="announce-bar" id="announce-bar">
       <a class="announce-link" href="#install">
         <span class="announce-tag" id="announce-tag">v0.3.0</span>
-        <span class="announce-text">OpenSync Launcher now ships for Linux AppImage, Flatpak, and Windows .exe</span>
+        <span class="announce-text">OpenSync Launcher now ships for Linux AppImage, Flatpak, Windows .exe, and macOS .dmg</span>
         <span class="announce-cta">Get packages <span class="arrow-right" aria-hidden="true">&#8594;</span></span>
       </a>
       <button type="button" class="announce-close" id="announce-close" aria-label="Dismiss announcement">&times;</button>
@@ -231,7 +231,8 @@
         <div class="install-track">
           <span class="track-pill" id="launcher-release-pill">Desktop Launcher · v0.3.0</span>
           <h2>For players</h2>
-          <p>Install the native Linux or Windows client and connect to any server on your network.</p>
+          <p>Install the native Linux, macOS, or Windows client and connect to any server on your network.</p>
+          <p class="platform-proposal" id="platform-proposal" hidden></p>
 
           <div class="player-tabs" role="tablist" aria-label="Download latest launcher package">
             <a class="pill-btn pill-tonal mode-pill is-active" role="tab" aria-selected="true" data-player="flatpak" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_amd64.flatpak" download>
@@ -242,6 +243,12 @@
             </a>
             <a class="pill-btn pill-tonal mode-pill" role="tab" aria-selected="false" data-player="windows" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_x64.exe" download>
               <span>Windows</span>
+            </a>
+            <a class="pill-btn pill-tonal mode-pill" role="tab" aria-selected="false" data-player="macos-arm64" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_aarch64.dmg" download>
+              <span>macOS (ARM64)</span>
+            </a>
+            <a class="pill-btn pill-tonal mode-pill" role="tab" aria-selected="false" data-player="macos-x64" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.3.0/OpenSync_Launcher_0.3.0_x86_64.dmg" download>
+              <span>macOS (Intel)</span>
             </a>
           </div>
 
@@ -267,6 +274,17 @@
             <button type="button" class="copy-pill" data-copy="cmd-server">Copy</button>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="section contributors-section" id="contributors" aria-labelledby="contributors-title">
+      <div class="contributors-head">
+        <span class="track-pill">Open Source Community</span>
+        <h2 class="section-title" id="contributors-title">Thank you to all contributors</h2>
+        <p class="section-lead contributors-lead">OpenSync and OpenSync Launcher are built together with contributors improving self-hosted preservation across Linux, Windows, and macOS.</p>
+      </div>
+      <div class="contributors-grid" id="contributors-grid" aria-live="polite">
+        <p class="contributors-status" id="contributors-status">Fetching contributors in real time…</p>
       </div>
     </section>
   </main>
