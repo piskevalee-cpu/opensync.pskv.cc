@@ -152,12 +152,6 @@
   initParticleCanvas(document.getElementById('hero-particles'), true);
   initParticleCanvas(document.getElementById('install-particles'), false);
 
-  document.querySelectorAll('.hero-artifact').forEach((item) => {
-    item.addEventListener('pointerenter', () => {
-      pulseBoost = 0.7;
-    });
-  });
-
   // Showcase mode pills & cabinet play simulation
   const MODE_COPY = {
     sync: 'Exits trigger SHA-256 hashing against the clean manifest and upload only modified save chunks. Offline queues flush automatically on reconnect.',
