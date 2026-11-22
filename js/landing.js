@@ -171,12 +171,28 @@
     });
   });
 
-  // Subtle card pointer sheen
+  // Exact WebUI 3D Steam capsule tilt + acrylic sheen sweep
   document.querySelectorAll('.game-tile').forEach((tile) => {
+    const MAX_TILT_X = 7;
+    const MAX_TILT_Y = 8;
+
     tile.addEventListener('pointermove', (e) => {
+      if (reducedMotion) return;
       const rect = tile.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const px = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const py = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+      tile.style.setProperty('--rx', `${(-py * MAX_TILT_X).toFixed(2)}deg`);
+      tile.style.setProperty('--ry', `${(px * MAX_TILT_Y).toFixed(2)}deg`);
       tile.style.setProperty('--gx', `${(((e.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`);
       tile.style.setProperty('--gy', `${(((e.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`);
+    });
+
+    tile.addEventListener('pointerleave', () => {
+      tile.style.removeProperty('--rx');
+      tile.style.removeProperty('--ry');
+      tile.style.removeProperty('--gx');
+      tile.style.removeProperty('--gy');
     });
   });
 

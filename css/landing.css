@@ -505,21 +505,30 @@ button {
 .game-tile {
   position: relative;
   aspect-ratio: 2 / 3;
-  border-radius: 18px;
+  border-radius: 10px;
   overflow: hidden;
   border: 1px solid var(--hairline);
   background: #0c0e13;
   cursor: pointer;
   transform-style: preserve-3d;
-  transition: transform 0.25s var(--ease), border-color 0.2s var(--ease), box-shadow 0.25s var(--ease);
+  will-change: transform, box-shadow;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.22s ease,
+    box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.38);
 }
 
 .game-tile:hover,
 .game-tile:focus-visible,
 .game-tile:focus-within {
-  transform: translateY(-4px) scale(1.015);
-  border-color: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.62);
+  transform: perspective(900px) rotateX(var(--rx, 3.5deg)) rotateY(var(--ry, -4.5deg)) translateY(-6px) scale(1.035);
+  border-color: rgba(255, 255, 255, 0.24);
+  box-shadow:
+    0 20px 38px rgba(0, 0, 0, 0.62),
+    0 0 0 1px rgba(125, 250, 155, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  z-index: 2;
 }
 
 .tile-art {
@@ -527,23 +536,47 @@ button {
   inset: 0;
 }
 
-.tile-art svg {
+.tile-cover-img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
   display: block;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+}
+
+.game-tile:hover .tile-cover-img,
+.game-tile:focus-within .tile-cover-img {
+  transform: scale(1.05);
 }
 
 .tile-sheen {
   position: absolute;
   inset: -20%;
+  z-index: 2;
   pointer-events: none;
-  background: radial-gradient(circle at var(--gx, 30%) var(--gy, 25%), rgba(255, 255, 255, 0.18), transparent 56%);
+  background:
+    radial-gradient(
+      circle at var(--gx, 28%) var(--gy, 22%),
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(255, 255, 255, 0.08) 28%,
+      transparent 58%
+    ),
+    linear-gradient(
+      122deg,
+      transparent 22%,
+      rgba(255, 255, 255, 0.14) 44%,
+      rgba(255, 255, 255, 0.03) 54%,
+      transparent 72%
+    );
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transform: translate3d(-12%, -10%, 0);
+  transition: opacity 0.28s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.game-tile:hover .tile-sheen {
+.game-tile:hover .tile-sheen,
+.game-tile:focus-within .tile-sheen {
   opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 .tile-chip {
@@ -610,18 +643,42 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 24px 12px 12px;
-  background: linear-gradient(180deg, transparent, rgba(9, 10, 13, 0.92));
+  z-index: 4;
+  padding: 11px 12px 12px;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 14, 0.78) 0%,
+    rgba(16, 16, 22, 0.54) 100%
+  );
+  backdrop-filter: blur(16px) saturate(145%);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  transition: background 0.22s ease, border-color 0.22s ease;
+}
+
+.game-tile:hover .tile-meta,
+.game-tile:focus-within .tile-meta {
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 14, 0.86) 0%,
+    rgba(20, 20, 28, 0.64) 100%
+  );
+  border-top-color: rgba(255, 255, 255, 0.22);
 }
 
 .tile-meta strong {
   display: block;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.15s ease;
+}
+
+.game-tile:hover .tile-meta strong {
+  color: var(--signal);
 }
 
 .tile-meta span {
