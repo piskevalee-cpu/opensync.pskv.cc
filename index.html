@@ -68,6 +68,25 @@
             <span class="arrow-right" aria-hidden="true">&#8594;</span>
           </a>
         </div>
+
+        <div class="hero-artifacts" aria-label="Core OpenSync capabilities">
+          <a class="hero-artifact" href="#cabinet">
+            <span class="artifact-dot" aria-hidden="true"></span>
+            <span>Differential save overlays</span>
+          </a>
+          <a class="hero-artifact" href="#cabinet">
+            <span class="artifact-dot" aria-hidden="true"></span>
+            <span>Zero-temp STORE streams</span>
+          </a>
+          <a class="hero-artifact" href="#capabilities">
+            <span class="artifact-dot" aria-hidden="true"></span>
+            <span>4 MB chunked uploads</span>
+          </a>
+          <a class="hero-artifact" href="#capabilities">
+            <span class="artifact-dot" aria-hidden="true"></span>
+            <span>Crash recovery &amp; Proton</span>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -106,7 +125,6 @@
                   <img src="assets/covers/hollow-knight.jpg" alt="Hollow Knight&reg; cover" class="tile-cover-img" loading="lazy">
                   <div class="tile-sheen" aria-hidden="true"></div>
                 </div>
-                <span class="tile-chip">Synced</span>
                 <button type="button" class="tile-play" data-game="Hollow Knight&reg;" aria-label="Simulate playing Hollow Knight&reg;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
@@ -121,7 +139,6 @@
                   <img src="assets/covers/cyberpunk-2077.jpg" alt="Cyberpunk 2077&reg; cover" class="tile-cover-img" loading="lazy">
                   <div class="tile-sheen" aria-hidden="true"></div>
                 </div>
-                <span class="tile-chip chip-blue">GE-Proton</span>
                 <button type="button" class="tile-play" data-game="Cyberpunk 2077&reg;" aria-label="Simulate playing Cyberpunk 2077&reg;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
@@ -136,7 +153,6 @@
                   <img src="assets/covers/celeste.jpg" alt="Celeste&reg; cover" class="tile-cover-img" loading="lazy">
                   <div class="tile-sheen" aria-hidden="true"></div>
                 </div>
-                <span class="tile-chip chip-amber">1 queued</span>
                 <button type="button" class="tile-play" data-game="Celeste&reg;" aria-label="Simulate playing Celeste&reg;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
@@ -239,7 +255,7 @@
           </div>
 
           <div class="cmd-strip">
-            <code id="cmd-flatpak">flatpak install --user OpenSync_Launcher_0.1.0_amd64.flatpak &amp;&amp; flatpak run io.opensync.launcher</code>
+            <code id="cmd-flatpak">curl -fSL https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak -o /tmp/opensync.flatpak &amp;&amp; flatpak install --user -y /tmp/opensync.flatpak &amp;&amp; flatpak run io.opensync.launcher</code>
             <button type="button" class="copy-pill" data-copy="cmd-flatpak">Copy</button>
           </div>
         </div>

@@ -338,6 +338,58 @@ button {
   gap: 12px;
 }
 
+.hero-artifacts {
+  margin-top: 34px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.hero-artifact {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 9999px;
+  background: rgba(125, 250, 155, 0.045);
+  border: 1px solid rgba(125, 250, 155, 0.16);
+  color: rgba(210, 232, 217, 0.85);
+  font-size: 12.5px;
+  font-weight: 500;
+  transition:
+    transform 0.22s var(--ease),
+    background-color 0.22s var(--ease),
+    border-color 0.22s var(--ease),
+    color 0.22s var(--ease),
+    box-shadow 0.22s var(--ease);
+}
+
+.artifact-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--signal);
+  opacity: 0.65;
+  transition: transform 0.22s var(--ease), opacity 0.22s var(--ease), box-shadow 0.22s var(--ease);
+}
+
+.hero-artifact:hover,
+.hero-artifact:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(125, 250, 155, 0.12);
+  border-color: rgba(125, 250, 155, 0.55);
+  color: var(--signal);
+  box-shadow: 0 8px 22px rgba(125, 250, 155, 0.14);
+}
+
+.hero-artifact:hover .artifact-dot,
+.hero-artifact:focus-visible .artifact-dot {
+  opacity: 1;
+  transform: scale(1.25);
+  box-shadow: 0 0 10px var(--signal);
+}
+
 /* ---------- Sections ---------- */
 
 .section {

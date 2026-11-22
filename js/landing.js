@@ -31,10 +31,10 @@
     if (!ctx) return;
 
     const palette = [
-      'rgba(125, 250, 155, 0.72)',
-      'rgba(116, 184, 255, 0.65)',
-      'rgba(255, 209, 102, 0.5)',
-      'rgba(244, 246, 250, 0.4)',
+      'rgba(125, 250, 155, 0.85)',
+      'rgba(125, 250, 155, 0.56)',
+      'rgba(74, 222, 128, 0.45)',
+      'rgba(187, 247, 208, 0.34)',
     ];
 
     let width = 0;
@@ -151,6 +151,12 @@
 
   initParticleCanvas(document.getElementById('hero-particles'), true);
   initParticleCanvas(document.getElementById('install-particles'), false);
+
+  document.querySelectorAll('.hero-artifact').forEach((item) => {
+    item.addEventListener('pointerenter', () => {
+      pulseBoost = 0.7;
+    });
+  });
 
   // Showcase mode pills & cabinet play simulation
   const MODE_COPY = {
