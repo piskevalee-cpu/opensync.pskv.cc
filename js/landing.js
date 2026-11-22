@@ -227,22 +227,22 @@
     });
   });
 
-  // Fetch latest release assets from GitHub (fallback to v0.1.0 if offline/rate-limited)
+  // Fetch latest release assets from GitHub (fallback to v0.2.0 if offline/rate-limited)
   const LATEST_RELEASE_API = 'https://api.github.com/repos/piskevalee-cpu/OpenSync-Launcher/releases/latest';
   const PLAYER_TARGETS = {
     flatpak: {
       ext: '.flatpak',
-      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.2.0/OpenSync_Launcher_0.2.0_amd64.flatpak',
       cmd: (url) => `curl -fSL ${url} -o /tmp/opensync.flatpak && flatpak install --user -y /tmp/opensync.flatpak && flatpak run io.opensync.launcher`,
     },
     appimage: {
       ext: '.AppImage',
-      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.2.0/OpenSync_Launcher_0.2.0_amd64.AppImage',
       cmd: (url) => `curl -fSL ${url} -o OpenSync_Launcher.AppImage && chmod +x OpenSync_Launcher.AppImage && ./OpenSync_Launcher.AppImage`,
     },
     windows: {
       ext: '.exe',
-      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe',
+      url: 'https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.2.0/OpenSync_Launcher_0.2.0_x64.exe',
       cmd: (url) => `irm ${url} -OutFile OpenSync_Launcher.exe; .\\OpenSync_Launcher.exe`,
     },
   };
@@ -268,8 +268,18 @@
         const match = assets.find((a) => typeof a.name === 'string' && a.name.endsWith(target.ext) && !a.name.endsWith('.sha256') && a.browser_download_url);
         if (match) target.url = match.browser_download_url;
       }
-      const badge = document.getElementById('launcher-release-pill');
-      if (badge && release.tag_name) badge.textContent = `Desktop Launcher · ${release.tag_name}`;
+      if (release.tag_name) {
+        const badge = document.getElementById('launcher-release-pill');
+        if (badge) badge.textContent = `Desktop Launcher · ${release.tag_name}`;
+        const announceTag = document.getElementById('announce-tag');
+        if (announceTag) announceTag.textContent = release.tag_name;
+        const heroLabel = document.getElementById('hero-download-label');
+        if (heroLabel) heroLabel.textContent = `Download ${release.tag_name}`;
+        const footerLabel = document.getElementById('footer-releases-label');
+        if (footerLabel) footerLabel.textContent = `${release.tag_name} releases`;
+      }
+      const footerLink = document.getElementById('footer-releases-link');
+      if (footerLink && release.html_url) footerLink.href = release.html_url;
       latestResolved = true;
       const active = document.querySelector('.player-tabs .mode-pill.is-active');
       syncPlayerCommand(active?.dataset.player || 'flatpak');
