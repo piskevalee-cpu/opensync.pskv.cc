@@ -10,10 +10,7 @@
     el.className = 'toast';
     el.textContent = message;
     host.appendChild(el);
-    window.setTimeout(() => {
-      el.classList.add('out');
-      window.setTimeout(() => el.remove(), 240);
-    }, 2200);
+    window.setTimeout(() => el.remove(), 2300);
   }
 
   async function copyText(text) {
@@ -22,9 +19,7 @@
         await navigator.clipboard.writeText(text);
         return true;
       }
-    } catch (_) {
-      // fall through to the textarea fallback
-    }
+    } catch (_) {}
     try {
       const ta = document.createElement('textarea');
       ta.value = text;
@@ -41,19 +36,27 @@
     }
   }
 
-  function flashCopied(el, label) {
-    const original = label ? el.innerHTML : null;
-    el.classList.add('copied');
-    if (label) el.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>';
-    window.setTimeout(() => {
-      el.classList.remove('copied');
-      if (original !== null) el.innerHTML = original;
-    }, 1500);
-  }
+  document.querySelectorAll('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const code = document.getElementById(btn.dataset.copy);
+      if (!code) return;
+      const original = btn.textContent;
+      const ok = await copyText(code.textContent.trim());
+      if (ok) {
+        btn.classList.add('is-copied');
+        btn.textContent = 'Copied';
+        toast('Command copied to clipboard');
+        window.setTimeout(() => {
+          btn.classList.remove('is-copied');
+          btn.textContent = original;
+        }, 1400);
+      }
+    });
+  });
 
-  /* ---------- nav active state ---------- */
+  /* ---------- Sticky Nav Scroll Highlight ---------- */
   const navLinks = Array.from(document.querySelectorAll('.nav a'));
-  const navSections = ['library', 'sync', 'launcher', 'deploy']
+  const navSections = ['overview', 'sync', 'launcher', 'stack', 'install']
     .map((id) => document.getElementById(id))
     .filter(Boolean);
 
@@ -69,227 +72,241 @@
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (visible) setActiveNav(visible.target.id);
       },
-      { rootMargin: '-25% 0px -55% 0px', threshold: [0, 0.2, 0.5] }
+      { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.25, 0.5] },
     );
-    navSections.forEach((section) => observer.observe(section));
-  }
-  navLinks.forEach((link) => link.addEventListener('click', () => setActiveNav(link.dataset.nav)));
-
-  /* ---------- install pill ---------- */
-  const installPill = document.getElementById('install-pill');
-  const installCommand = document.getElementById('install-command');
-  const installCopy = document.getElementById('install-copy');
-  if (installPill && installCommand) {
-    installPill.addEventListener('click', async () => {
-      const ok = await copyText(installCommand.textContent.trim());
-      if (installCopy) flashCopied(installCopy, true);
-      toast(ok ? 'Install command copied' : 'Select the command to copy it');
-    });
+    navSections.forEach((sec) => observer.observe(sec));
   }
 
-  /* ---------- capsule cards ---------- */
-  const gameData = [
-    { name: 'Hollow Peak', state: 'Overlay current', size: '128 MB', sync: '4 minutes ago', badge: 'Ready to play' },
-    { name: 'Neon Drift', state: 'Baseline only', size: '64 MB', sync: 'Not synced yet', badge: 'Installed clean' },
-    { name: 'Emberfall', state: 'Save queued', size: '256 MB', sync: '2 days ago', badge: 'Sync on next launch' },
-    { name: 'Deep Signal', state: 'Overlay current', size: '92 MB', sync: '18 hours ago', badge: 'Ready to play' },
-    { name: 'Verdant', state: 'Baseline only', size: '48 MB', sync: 'Not synced yet', badge: 'Installed clean' },
-    { name: 'Iron Meridian', state: 'Overlay current', size: '340 MB', sync: '1 hour ago', badge: 'Ready to play' }
+  /* ---------- Hero Launcher Mockup & Live Post-Close Auto-Sync ---------- */
+  const games = ['Fogwoods', 'Cyber Runner 2077', 'Hollow Spire'];
+  const logs = [
+    { title: 'Auto-synced Fogwoods', detail: '2 files uploaded (184 KB), 312 unchanged' },
+    { title: 'Closed Fogwoods', detail: 'Played 42m, Proton inactive' },
   ];
 
-  const previewName = document.getElementById('preview-name');
-  const previewState = document.getElementById('preview-state');
-  const previewSize = document.getElementById('preview-size');
-  const previewSync = document.getElementById('preview-sync');
-  const previewBadge = document.getElementById('preview-badge');
-  const capsules = Array.from(document.querySelectorAll('.capsule-card'));
+  const popList = document.getElementById('lw-pop-list');
+  const popEl = document.getElementById('lw-activity-popover');
+  const activityBtn = document.getElementById('lw-activity-btn');
+  const activityLabel = document.getElementById('lw-activity-label');
+  const activityCount = document.getElementById('lw-activity-count');
+  const sessionNote = document.getElementById('lw-session-note');
+  const syncBanner = document.getElementById('lw-sync-banner');
+  const syncTitle = document.getElementById('lw-sync-title');
+  const syncSub = document.getElementById('lw-sync-sub');
+  const syncSpinner = document.getElementById('lw-sync-spinner');
 
-  capsules.forEach((card) => {
-    const index = Number(card.dataset.game);
-    let raf = 0;
-    let tickerTimer = 0;
-    let tickerIndex = 0;
-    const ticker = card.querySelector('.card-stat-item');
-    const stats = ticker ? ticker.dataset.stats.split(',') : [];
-
-    card.addEventListener('pointermove', (event) => {
-      if (raf) return;
-      raf = window.requestAnimationFrame(() => {
-        raf = 0;
-        const rect = card.getBoundingClientRect();
-        const nx = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
-        const ny = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
-        card.style.setProperty('--ry', ((nx - 0.5) * 11).toFixed(2) + 'deg');
-        card.style.setProperty('--rx', ((0.5 - ny) * 9).toFixed(2) + 'deg');
-        card.style.setProperty('--gx', (nx * 100).toFixed(1) + '%');
-        card.style.setProperty('--gy', (ny * 100).toFixed(1) + '%');
-      });
-    });
-
-    const resetTilt = () => {
-      card.style.setProperty('--rx', '3.5deg');
-      card.style.setProperty('--ry', '-4.5deg');
-      card.style.setProperty('--gx', '28%');
-      card.style.setProperty('--gy', '22%');
-      if (tickerTimer) window.clearInterval(tickerTimer);
-      tickerTimer = 0;
-      tickerIndex = 0;
-      if (ticker && stats.length) {
-        ticker.textContent = stats[0];
-        ticker.classList.remove('is-entering');
-        void ticker.offsetWidth;
-        ticker.classList.add('is-entering');
-      }
-    };
-
-    card.addEventListener('pointerleave', resetTilt);
-    card.addEventListener('blur', resetTilt);
-
-    card.addEventListener('pointerenter', () => {
-      if (!ticker || stats.length < 2 || reduceMotion) return;
-      tickerTimer = window.setInterval(() => {
-        tickerIndex = (tickerIndex + 1) % stats.length;
-        ticker.classList.remove('is-entering');
-        void ticker.offsetWidth;
-        ticker.textContent = stats[tickerIndex];
-        ticker.classList.add('is-entering');
-      }, 1000);
-    });
-
-    card.addEventListener('click', () => {
-      capsules.forEach((c) => c.classList.toggle('is-active', c === card));
-      const data = gameData[index];
-      if (!data) return;
-      if (previewName) previewName.textContent = data.name;
-      if (previewState) previewState.textContent = data.state;
-      if (previewSize) previewSize.textContent = data.size;
-      if (previewSync) previewSync.textContent = data.sync;
-      if (previewBadge) previewBadge.textContent = data.badge;
-    });
-
-    card.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        card.click();
-      }
-    });
-
-    const play = card.querySelector('.card-play');
-    if (play) {
-      play.addEventListener('click', (event) => {
-        event.stopPropagation();
-        const data = gameData[index];
-        toast(data ? 'Launching ' + data.name : 'Launching game');
-      });
-    }
-  });
-
-  /* ---------- diff explorer ---------- */
-  const fileIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>';
-
-  const baseFiles = [
-    { dir: 'Game/Binaries/', name: 'Game.exe', size: '42.6 MB' },
-    { dir: 'Game/Content/', name: 'level_01.pak', size: '1.8 GB' },
-    { dir: 'Game/Content/', name: 'level_02.pak', size: '2.3 GB' },
-    { dir: 'Saves/', name: 'slot_01.dat', size: '128 KB' },
-    { dir: 'Saves/', name: 'settings.ini', size: '4 KB' },
-    { dir: 'Saves/', name: 'thumbnail.png', size: '1.2 MB' }
-  ];
-
-  const modeConfig = {
-    clean: {
-      title: 'Clean manifest',
-      meta: '6 files tracked',
-      note: 'The server hashes every clean file once at upload. This baseline never changes and is shared by every player.',
-      states: {}
-    },
-    usera: {
-      title: 'User A save overlay',
-      meta: '2 chunks changed',
-      note: 'Hashing in the browser compares local saves to the clean manifest. Only changed 4 MB chunks are uploaded to A’s private overlay.',
-      states: { 'slot_01.dat': ['change', '2 chunks sent'], 'settings.ini': ['change', '1 chunk sent'] }
-    },
-    userb: {
-      title: 'User B save overlay',
-      meta: '1 chunk changed, 1 deleted',
-      note: 'B has different progress. Their overlay is fully isolated, including a save file marked for deletion on download.',
-      states: { 'slot_01.dat': ['change', '1 chunk sent'], 'thumbnail.png': ['delete', 'Marked deleted'] }
-    },
-    merge: {
-      title: 'On-the-fly streaming zip',
-      meta: 'clean + overlay − deletions',
-      note: 'At download time the server streams clean files, substitutes overlay versions, and skips deletions. No cached zip is ever built.',
-      states: {
-        'Game.exe': ['skip', 'From clean'],
-        'level_01.pak': ['skip', 'From clean'],
-        'level_02.pak': ['skip', 'From clean'],
-        'slot_01.dat': ['change', 'From overlay'],
-        'settings.ini': ['skip', 'From clean'],
-        'thumbnail.png': ['delete', 'Excluded']
-      },
-      extra: { name: 'merged-download.zip', size: '4.1 GB', state: 'keep', label: 'Streamed to disk' }
-    }
-  };
-
-  const filetree = document.getElementById('filetree');
-  const consoleTitle = document.getElementById('console-title');
-  const consoleMeta = document.getElementById('console-meta');
-  const consoleNote = document.getElementById('console-note');
-
-  function renderExplorer(mode) {
-    const config = modeConfig[mode];
-    if (!config || !filetree) return;
-    if (consoleTitle) consoleTitle.textContent = config.title;
-    if (consoleMeta) consoleMeta.textContent = config.meta;
-    if (consoleNote) consoleNote.textContent = config.note;
-
-    const rows = baseFiles.map((file, i) => {
-      const state = (config.states && config.states[file.name]) || ['skip', 'Unchanged'];
-      return { ...file, state: state[0], label: state[1], delay: i * 40 };
-    });
-    if (config.extra) {
-      rows.push({
-        dir: '→ ',
-        name: config.extra.name,
-        size: config.extra.size,
-        state: config.extra.state,
-        label: config.extra.label,
-        delay: rows.length * 40
-      });
-    }
-
-    filetree.innerHTML = rows
+  function renderHeroLogs() {
+    if (activityCount) activityCount.textContent = String(logs.length);
+    if (!popList) return;
+    popList.innerHTML = logs
+      .slice(0, 6)
       .map(
-        (row) => `
-        <div class="file-row" style="animation-delay:${row.delay}ms">
-          <span class="file-icon">${fileIcon}</span>
-          <span class="file-name"><span class="file-dir">${row.dir}</span>${row.name}</span>
-          <span class="file-size">${row.size}</span>
-          <span class="file-state state-${row.state}"><i></i>${row.label}</span>
-        </div>`
+        (entry) =>
+          `<div class="lw-pop-row"><strong>${entry.title}</strong><span>${entry.detail}</span></div>`,
       )
       .join('');
   }
+  renderHeroLogs();
 
-  const explorerNodes = Array.from(document.querySelectorAll('.explorer-node'));
-  explorerNodes.forEach((node) => {
-    node.addEventListener('click', () => {
-      explorerNodes.forEach((n) => {
-        const active = n === node;
-        n.classList.toggle('is-active', active);
-        n.setAttribute('aria-selected', active ? 'true' : 'false');
-      });
-      renderExplorer(node.dataset.mode);
-    });
-    node.addEventListener('mouseenter', () => {
-      if (node !== document.querySelector('.explorer-node.is-active')) {
-        // hover preview without changing selection would be noisy; keep click authoritative
+  activityBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const next = popEl.hidden;
+    popEl.hidden = !next;
+    activityBtn.setAttribute('aria-expanded', String(next));
+  });
+
+  document.getElementById('lw-pop-close')?.addEventListener('click', () => {
+    popEl.hidden = true;
+    activityBtn?.setAttribute('aria-expanded', 'false');
+  });
+
+  let simActive = false;
+  function simulatePlaySession(idx) {
+    if (simActive) return;
+    simActive = true;
+    const name = games[idx] || 'Fogwoods';
+    const badge = document.querySelector(`[data-card-badge="${idx}"]`);
+    const prevText = badge ? badge.textContent : 'Synced';
+    const prevClass = badge ? badge.className : '';
+
+    logs.unshift({ title: `Started ${name}`, detail: idx === 1 ? 'Runtime: GE-Proton9-25' : 'Runtime: native' });
+    renderHeroLogs();
+
+    if (badge) {
+      badge.textContent = 'Playing';
+      badge.className = 'capsule-state state-playing';
+    }
+    if (sessionNote) sessionNote.textContent = `${name} is running. Session active...`;
+
+    window.setTimeout(() => {
+      if (badge) {
+        badge.textContent = 'Syncing...';
+        badge.className = 'capsule-state state-pending';
       }
+      activityBtn?.classList.add('is-syncing');
+      if (activityLabel) activityLabel.textContent = 'Syncing saves';
+      if (sessionNote) sessionNote.textContent = `${name} closed. Auto-syncing modified save files...`;
+
+      logs.unshift({ title: `Closed ${name}`, detail: 'Played 18m, checking local saves' });
+      renderHeroLogs();
+
+      if (syncBanner && syncTitle && syncSub && syncSpinner) {
+        syncSpinner.classList.remove('is-done');
+        syncTitle.textContent = `Closed ${name}`;
+        syncSub.textContent = 'Scanning saves and uploading changed 4 MB chunks...';
+        syncBanner.hidden = false;
+      }
+
+      window.setTimeout(() => {
+        if (badge) {
+          badge.textContent = 'Synced';
+          badge.className = prevClass.includes('state-proton') ? 'capsule-state state-proton' : 'capsule-state state-synced';
+          if (idx === 1) badge.textContent = 'Synced (Proton)';
+        }
+        activityBtn?.classList.remove('is-syncing');
+        if (activityLabel) activityLabel.textContent = 'Activity';
+        if (sessionNote) sessionNote.textContent = `Saves synced for ${name}. Click Play on any game to test again.`;
+
+        logs.unshift({ title: `Auto-synced ${name}`, detail: '2 changed files uploaded (240 KB)' });
+        renderHeroLogs();
+
+        if (syncSpinner && syncTitle && syncSub) {
+          syncSpinner.classList.add('is-done');
+          syncTitle.textContent = `Saves synced for ${name}`;
+          syncSub.textContent = '2 changed files uploaded (240 KB)';
+        }
+
+        window.setTimeout(() => {
+          if (syncBanner) syncBanner.hidden = true;
+          if (badge) badge.textContent = prevText === '1 queued' ? 'Synced' : badge.textContent;
+          simActive = false;
+        }, 2200);
+      }, 1250);
+    }, 1150);
+  }
+
+  document.querySelectorAll('.capsule-card').forEach((card) => {
+    const idx = Number(card.dataset.game || 0);
+    card.addEventListener('pointermove', (event) => {
+      if (reduceMotion) return;
+      const rect = card.getBoundingClientRect();
+      const nx = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+      const ny = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+      card.style.setProperty('--ry', ((nx - 0.5) * 10).toFixed(2) + 'deg');
+      card.style.setProperty('--rx', ((0.5 - ny) * 8).toFixed(2) + 'deg');
+      card.style.setProperty('--gx', (nx * 100).toFixed(1) + '%');
+      card.style.setProperty('--gy', (ny * 100).toFixed(1) + '%');
+    });
+    card.addEventListener('pointerleave', () => {
+      card.style.setProperty('--rx', '0deg');
+      card.style.setProperty('--ry', '0deg');
+    });
+    card.addEventListener('click', () => simulatePlaySession(idx));
+  });
+
+  document.getElementById('lw-fab-upload')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelector('[data-console="uploads"]')?.click();
+    document.getElementById('launcher')?.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  /* ---------- Differential Sync Explorer ---------- */
+  const diffFiles = [
+    { dir: 'Binaries/', name: 'Game.exe', size: '42.6 MB' },
+    { dir: 'Content/', name: 'world_assets.pak', size: '2.10 GB' },
+    { dir: 'Content/', name: 'audio_bank.pak', size: '1.45 GB' },
+    { dir: 'Saves/', name: 'slot_01.sav', size: '192 KB' },
+    { dir: 'Saves/', name: 'controls.ini', size: '4 KB' },
+    { dir: 'Saves/', name: 'autosave_thumb.png', size: '820 KB' },
+  ];
+
+  const diffModes = {
+    clean: {
+      title: 'Clean manifest',
+      meta: '6 files hashed',
+      note: 'Uploaded once as the shared baseline for every player. Files stay as an ordinary folder on disk and their SHA-256 manifest never mutates.',
+      states: {},
+    },
+    usera: {
+      title: 'Player A overlay',
+      meta: '2 modified saves sent',
+      note: 'Player A only uploads changed files relative to the clean manifest. Unchanged gigabyte .pak files are skipped cleanly.',
+      states: { 'slot_01.sav': ['change', 'Modified, 1 chunk sent'], 'controls.ini': ['change', 'Modified, 1 chunk sent'] },
+    },
+    userb: {
+      title: 'Player B overlay',
+      meta: '1 modified, 1 deleted',
+      note: 'Player B maintains an independent save overlay plus deletions.json bound to the current manifest hash.',
+      states: { 'slot_01.sav': ['change', 'Modified, 1 chunk sent'], 'autosave_thumb.png': ['delete', 'Recorded in deletions.json'] },
+    },
+    merge: {
+      title: 'On-the-fly streaming zip',
+      meta: 'clean + overlay minus deletions',
+      note: 'At download time, the server streams STORE entries in sorted path order directly from clean files plus Player B overlay, excluding deleted files with no temporary zip file.',
+      states: {
+        'Game.exe': ['stream', 'Streamed from clean'],
+        'world_assets.pak': ['stream', 'Streamed from clean'],
+        'audio_bank.pak': ['stream', 'Streamed from clean'],
+        'slot_01.sav': ['change', 'Substituted from overlay'],
+        'controls.ini': ['stream', 'Streamed from clean'],
+        'autosave_thumb.png': ['delete', 'Excluded at download'],
+      },
+    },
+  };
+
+  const diffTitle = document.getElementById('diff-title');
+  const diffMeta = document.getElementById('diff-meta');
+  const diffNote = document.getElementById('diff-note');
+  const diffRows = document.getElementById('diff-rows');
+
+  function renderDiff(mode) {
+    const cfg = diffModes[mode];
+    if (!cfg || !diffRows) return;
+    if (diffTitle) diffTitle.textContent = cfg.title;
+    if (diffMeta) diffMeta.textContent = cfg.meta;
+    if (diffNote) diffNote.textContent = cfg.note;
+    diffRows.innerHTML = diffFiles
+      .map((f) => {
+        const [cls, label] = cfg.states[f.name] || ['skip', 'Unchanged'];
+        return `<div class="diff-row">
+          <div class="diff-path"><span>${f.dir}</span>${f.name}</div>
+          <div class="diff-size">${f.size}</div>
+          <div class="diff-status is-${cls}">${label}</div>
+        </div>`;
+      })
+      .join('');
+  }
+
+  document.querySelectorAll('.diff-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.diff-tab').forEach((t) => {
+        const active = t === tab;
+        t.classList.toggle('is-active', active);
+        t.setAttribute('aria-selected', String(active));
+      });
+      renderDiff(tab.dataset.mode);
     });
   });
-  renderExplorer('clean');
+  renderDiff('clean');
 
-  /* ---------- waveform ---------- */
+  /* ---------- Launcher Feature Console Switcher ---------- */
+  document.querySelectorAll('.console-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.console;
+      document.querySelectorAll('.console-tab').forEach((t) => {
+        const active = t === tab;
+        t.classList.toggle('is-active', active);
+        t.setAttribute('aria-selected', String(active));
+      });
+      document.querySelectorAll('.console-pane').forEach((pane) => {
+        const active = pane.dataset.pane === target;
+        pane.classList.toggle('is-active', active);
+        pane.hidden = !active;
+      });
+    });
+  });
+
+  /* ---------- Live Download Waveform Canvas ---------- */
   const canvas = document.getElementById('wave-canvas');
   const waveWrap = document.getElementById('wave-wrap');
   const waveRate = document.getElementById('wave-rate');
@@ -300,190 +317,127 @@
   const progressBar = document.getElementById('wave-progress-bar');
   const waveBytes = document.getElementById('wave-bytes');
 
-  const modeSettings = {
-    store: { status: 'Streaming at wire speed', color: '#7dfa9b', base: 98, jitter: 15, speed: 0.22 },
-    throttle: { status: 'Bandwidth cap active', color: '#6bb3ff', base: 49, jitter: 4, speed: 0.1 },
-    paused: { status: 'Transfer paused', color: '#5c5c68', base: 0, jitter: 0, speed: 0 }
+  const waveSettings = {
+    store: { label: 'Streaming uncompressed STORE zip straight to disk', color: '#7dfa9b', base: 98, jitter: 12 },
+    throttle: { label: 'Transfer capped at 50 MB/s bandwidth limit', color: '#6bb3ff', base: 48, jitter: 4 },
+    paused: { label: 'Transfer paused on disk', color: '#676e79', base: 0, jitter: 0 },
   };
 
   if (canvas && waveWrap) {
     const ctx = canvas.getContext('2d');
-    const samples = new Array(120).fill(0);
+    const samples = new Array(110).fill(92);
     let mode = 'store';
-    let cssW = 0;
-    let cssH = 0;
-    let dpr = 1;
-    let smooth = 0;
+    let cssW = 1;
+    let cssH = 1;
+    let smooth = 94;
     let phase = 0;
     let progress = 64;
     let bytes = 7.8;
     let scrubX = null;
-    let lastRateText = '';
 
-    function resizeCanvas() {
-      const rect = waveWrap.getBoundingClientRect();
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      cssW = Math.max(1, Math.floor(rect.width));
-      cssH = Math.max(1, Math.floor(rect.height));
+    function resize() {
+      const r = waveWrap.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cssW = Math.floor(r.width);
+      cssH = Math.floor(r.height);
       canvas.width = Math.floor(cssW * dpr);
       canvas.height = Math.floor(cssH * dpr);
-      canvas.style.width = cssW + 'px';
-      canvas.style.height = cssH + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    function sampleValue() {
-      const cfg = modeSettings[mode];
-      if (mode === 'paused') return smooth * 0.82;
-      const wave = Math.sin(phase) * 7 + Math.sin(phase * 2.7) * 4;
-      const noise = (Math.random() - 0.5) * cfg.jitter;
-      const spike = Math.random() > 0.985 ? 16 : 0;
-      const target = Math.max(0, Math.min(118, cfg.base + wave + noise + spike));
-      smooth += (target - smooth) * (reduceMotion ? 1 : 0.35);
+    function nextSample() {
+      const cfg = waveSettings[mode];
+      if (mode === 'paused') return smooth * 0.84;
+      const target = Math.max(0, Math.min(118, cfg.base + Math.sin(phase) * 6 + (Math.random() - 0.5) * cfg.jitter));
+      smooth += (target - smooth) * 0.3;
       return smooth;
     }
 
-    function yFor(value) {
-      return cssH - (Math.max(0, Math.min(120, value)) / 120) * cssH;
-    }
-
     function draw() {
-      const cfg = modeSettings[mode];
+      const cfg = waveSettings[mode];
       ctx.clearRect(0, 0, cssW, cssH);
+      const step = cssW / (samples.length - 1);
+      const yOf = (v) => cssH - (Math.max(0, Math.min(120, v)) / 120) * cssH;
 
-      // grid
-      ctx.save();
       ctx.strokeStyle = 'rgba(255,255,255,0.045)';
       ctx.lineWidth = 1;
-      ctx.setLineDash([4, 6]);
       for (let i = 1; i < 4; i++) {
-        const y = (cssH / 4) * i;
+        const y = Math.round((cssH / 4) * i) + 0.5;
         ctx.beginPath();
-        ctx.moveTo(0, y + 0.5);
-        ctx.lineTo(cssW, y + 0.5);
+        ctx.moveTo(0, y);
+        ctx.lineTo(cssW, y);
         ctx.stroke();
       }
-      for (let i = 1; i < 8; i++) {
-        const x = (cssW / 8) * i;
-        ctx.beginPath();
-        ctx.moveTo(x + 0.5, 0);
-        ctx.lineTo(x + 0.5, cssH);
-        ctx.stroke();
-      }
-      ctx.restore();
 
-      const n = samples.length;
-      const step = cssW / (n - 1);
+      const grad = ctx.createLinearGradient(0, 0, 0, cssH);
+      grad.addColorStop(0, mode === 'throttle' ? 'rgba(107,179,255,0.24)' : mode === 'paused' ? 'rgba(103,110,121,0.14)' : 'rgba(125,250,155,0.26)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
 
-      // filled area
-      const gradient = ctx.createLinearGradient(0, 0, 0, cssH);
-      if (mode === 'paused') {
-        gradient.addColorStop(0, 'rgba(92,92,104,0.16)');
-        gradient.addColorStop(1, 'rgba(92,92,104,0)');
-      } else if (mode === 'throttle') {
-        gradient.addColorStop(0, 'rgba(107,179,255,0.28)');
-        gradient.addColorStop(1, 'rgba(107,179,255,0)');
-      } else {
-        gradient.addColorStop(0, 'rgba(125,250,155,0.32)');
-        gradient.addColorStop(1, 'rgba(125,250,155,0)');
-      }
       ctx.beginPath();
       ctx.moveTo(0, cssH);
-      for (let i = 0; i < n; i++) ctx.lineTo(i * step, yFor(samples[i]));
+      for (let i = 0; i < samples.length; i++) ctx.lineTo(i * step, yOf(samples[i]));
       ctx.lineTo(cssW, cssH);
       ctx.closePath();
-      ctx.fillStyle = gradient;
+      ctx.fillStyle = grad;
       ctx.fill();
 
-      // curve
-      ctx.save();
       ctx.beginPath();
-      for (let i = 0; i < n; i++) {
+      for (let i = 0; i < samples.length; i++) {
         const x = i * step;
-        const y = yFor(samples[i]);
+        const y = yOf(samples[i]);
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
       ctx.strokeStyle = cfg.color;
       ctx.lineWidth = 2;
-      ctx.lineJoin = 'round';
-      ctx.shadowColor = cfg.color;
-      ctx.shadowBlur = mode === 'paused' ? 0 : 12;
       ctx.stroke();
-      ctx.restore();
 
-      // head dot
-      const headY = yFor(samples[n - 1]);
-      ctx.beginPath();
-      ctx.arc(cssW - step, headY, 3.2, 0, Math.PI * 2);
-      ctx.fillStyle = cfg.color;
-      ctx.shadowColor = cfg.color;
-      ctx.shadowBlur = 14;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // scrub guide
       if (scrubX !== null) {
-        const idx = Math.max(0, Math.min(n - 1, Math.round(scrubX / step)));
-        ctx.save();
-        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-        ctx.setLineDash([3, 3]);
+        const idx = Math.max(0, Math.min(samples.length - 1, Math.round(scrubX / step)));
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
         ctx.beginPath();
-        ctx.moveTo(idx * step + 0.5, 0);
-        ctx.lineTo(idx * step + 0.5, cssH);
+        ctx.moveTo(idx * step, 0);
+        ctx.lineTo(idx * step, cssH);
         ctx.stroke();
-        ctx.restore();
-        ctx.beginPath();
-        ctx.arc(idx * step, yFor(samples[idx]), 4, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff';
-        ctx.fill();
         if (ttRate && ttTime) {
           ttRate.textContent = samples[idx].toFixed(1) + ' MB/s';
-          ttTime.textContent = idx === n - 1 ? 'now' : ((n - 1 - idx) / 30).toFixed(1) + ' s ago';
+          ttTime.textContent = idx === samples.length - 1 ? 'now' : ((samples.length - 1 - idx) / 30).toFixed(1) + 's ago';
         }
       }
     }
 
-    let lastPush = 0;
-    function frame(now) {
-      if (now - lastPush > 33) {
-        samples.push(sampleValue());
+    let last = 0;
+    function loop(now) {
+      if (now - last > 33) {
+        samples.push(nextSample());
         samples.shift();
-        phase += 0.06;
-        lastPush = now;
+        phase += 0.08;
+        last = now;
         if (mode !== 'paused') {
-          progress = Math.min(99.5, progress + (mode === 'store' ? 0.035 : 0.016));
-          bytes = Math.min(12.2, 7.8 + (progress - 64) * 0.129);
+          progress = progress >= 99 ? 42 : progress + (mode === 'store' ? 0.05 : 0.025);
+          bytes = 12.2 * (progress / 100);
           if (progressBar) progressBar.style.width = progress.toFixed(1) + '%';
-          if (waveBytes) waveBytes.textContent = bytes.toFixed(1) + ' / 12.2 GB';
+          if (waveBytes) waveBytes.textContent = `${bytes.toFixed(1)} / 12.2 GB`;
         }
-      }
-      const rate = samples[samples.length - 1];
-      const rateText = rate.toFixed(1) + ' MB/s';
-      if (waveRate && rateText !== lastRateText) {
-        waveRate.textContent = rateText;
-        lastRateText = rateText;
+        if (waveRate) waveRate.textContent = `${samples[samples.length - 1].toFixed(1)} MB/s`;
       }
       draw();
-      window.requestAnimationFrame(frame);
+      window.requestAnimationFrame(loop);
     }
 
-    if ('ResizeObserver' in window) {
-      new ResizeObserver(resizeCanvas).observe(waveWrap);
-    } else {
-      window.addEventListener('resize', resizeCanvas);
-    }
-    resizeCanvas();
-    window.requestAnimationFrame(frame);
+    if ('ResizeObserver' in window) new ResizeObserver(resize).observe(waveWrap);
+    window.addEventListener('resize', resize);
+    resize();
+    window.requestAnimationFrame(loop);
 
-    waveWrap.addEventListener('pointermove', (event) => {
-      const rect = waveWrap.getBoundingClientRect();
-      scrubX = Math.min(rect.width, Math.max(0, event.clientX - rect.left));
+    waveWrap.addEventListener('pointermove', (e) => {
+      const r = waveWrap.getBoundingClientRect();
+      scrubX = Math.min(r.width, Math.max(0, e.clientX - r.left));
       if (waveTooltip) {
         waveTooltip.hidden = false;
-        const clamped = Math.min(rect.width - 60, Math.max(60, scrubX));
-        waveTooltip.style.left = clamped + 'px';
-        waveTooltip.style.top = Math.min(rect.height - 4, Math.max(48, event.clientY - rect.top)) + 'px';
+        waveTooltip.style.left = Math.min(r.width - 54, Math.max(54, scrubX)) + 'px';
+        waveTooltip.style.top = Math.max(42, e.clientY - r.top) + 'px';
       }
     });
     waveWrap.addEventListener('pointerleave', () => {
@@ -491,52 +445,114 @@
       if (waveTooltip) waveTooltip.hidden = true;
     });
 
-    const modeButtons = Array.from(document.querySelectorAll('.mode-btn'));
-    modeButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        mode = button.dataset.mode;
-        modeButtons.forEach((b) => b.classList.toggle('is-active', b === button));
-        if (waveStatus) waveStatus.textContent = modeSettings[mode].status;
-        if (waveRate) waveRate.style.color = mode === 'throttle' ? '#6bb3ff' : mode === 'paused' ? '#8f8f9a' : '#7dfa9b';
+    document.querySelectorAll('[data-wave-mode]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        mode = btn.dataset.waveMode;
+        document.querySelectorAll('[data-wave-mode]').forEach((b) => b.classList.toggle('is-active', b === btn));
+        if (waveStatus) waveStatus.textContent = waveSettings[mode].label;
+        if (waveRate) waveRate.style.color = waveSettings[mode].color;
       });
     });
   }
 
-  /* ---------- deploy tabs ---------- */
-  const deployTabs = Array.from(document.querySelectorAll('.deploy-tab'));
-  const deployPanels = Array.from(document.querySelectorAll('.deploy-panel'));
-  deployTabs.forEach((tab) => {
+  /* ---------- 6-Worker LPT Upload Demo ---------- */
+  const workersHost = document.getElementById('upload-workers');
+  const uploadStatus = document.getElementById('upload-status');
+  const workerData = [
+    { file: 'Data/world_main.pak', pct: 84 },
+    { file: 'Data/textures_4k.pak', pct: 76 },
+    { file: 'Data/audio_streams.bank', pct: 91 },
+    { file: 'Movies/intro_cutscene.mp4', pct: 68 },
+    { file: 'Binaries/CyberRunner.exe', pct: 100 },
+    { file: 'Config/manifest_tree.dat', pct: 100 },
+  ];
+
+  function renderWorkers() {
+    if (!workersHost) return;
+    workersHost.innerHTML = workerData
+      .map(
+        (w, i) => `
+      <div class="worker-row">
+        <div class="worker-top">
+          <strong>W${i + 1}: ${w.file}</strong>
+          <span>${Math.round(w.pct)}%</span>
+        </div>
+        <div class="worker-bar"><i style="width:${w.pct}%"></i></div>
+      </div>`,
+      )
+      .join('');
+  }
+  renderWorkers();
+
+  let uploadTimer = 0;
+  document.getElementById('btn-run-upload-demo')?.addEventListener('click', () => {
+    if (uploadTimer) window.clearInterval(uploadTimer);
+    workerData.forEach((w, i) => { w.pct = 12 + i * 6; });
+    if (uploadStatus) uploadStatus.textContent = 'Streaming 4 MB chunks across 6 concurrent HTTP workers...';
+    renderWorkers();
+    uploadTimer = window.setInterval(() => {
+      let allDone = true;
+      workerData.forEach((w, i) => {
+        if (w.pct < 100) {
+          w.pct = Math.min(100, w.pct + 14 + (i % 3) * 4);
+          allDone = false;
+        }
+      });
+      renderWorkers();
+      if (allDone) {
+        window.clearInterval(uploadTimer);
+        uploadTimer = 0;
+        if (uploadStatus) uploadStatus.textContent = 'All chunks received. Server manifest indexed and ready.';
+      }
+    }, 240);
+  });
+
+  /* ---------- Crash Recovery & Safe Shutdown Demo ---------- */
+  const recoveryConsole = document.getElementById('recovery-console');
+  document.getElementById('btn-sim-crash')?.addEventListener('click', () => {
+    if (!recoveryConsole) return;
+    recoveryConsole.innerHTML = `
+      <div class="recovery-card-title">Interrupted session detected for Fogwoods</div>
+      <p class="recovery-card-copy">OpenSync closed unexpectedly while the game was running. Two modified save files were found in the game folder:</p>
+      <div class="recovery-files">
+        <span>saves/slot1.sav (184 KB modified)</span>
+        <span>saves/autosave_checkpoint.dat (56 KB new)</span>
+      </div>
+      <div class="recovery-actions">
+        <button type="button" class="btn btn-primary btn-sm" id="btn-demo-sync-now">Sync saves now</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-demo-skip-sync">Skip save sync</button>
+      </div>
+    `;
+    document.getElementById('btn-demo-sync-now')?.addEventListener('click', () => {
+      recoveryConsole.innerHTML = '<div class="recovery-card-title" style="color:var(--signal);">Recovered and synced 2 save files</div><p class="recovery-card-copy">Overlay updated on the server and the interrupted session marker has been cleared from SQLite.</p>';
+    });
+    document.getElementById('btn-demo-skip-sync')?.addEventListener('click', () => {
+      recoveryConsole.innerHTML = '<div class="recovery-card-title">Save recovery skipped</div><p class="recovery-card-copy">Local save files remain intact on disk without uploading.</p>';
+    });
+  });
+
+  document.getElementById('btn-sim-shutdown')?.addEventListener('click', () => {
+    if (!recoveryConsole) return;
+    recoveryConsole.innerHTML = '<div class="recovery-card-title">Waiting for 1 active save sync before exit...</div><p class="recovery-card-copy">Pausing queued transfers and writing session heartbeats to disk.</p>';
+    window.setTimeout(() => {
+      recoveryConsole.innerHTML = '<div class="recovery-card-title" style="color:var(--signal);">Safe shutdown complete</div><p class="recovery-card-copy">In-flight save sync finished cleanly and SQLite WAL checkpointed via PRAGMA wal_checkpoint(TRUNCATE).</p>';
+    }, 850);
+  });
+
+  /* ---------- Install Tabs ---------- */
+  document.querySelectorAll('[data-install-tab]').forEach((tab) => {
     tab.addEventListener('click', () => {
-      const target = tab.dataset.tab;
-      deployTabs.forEach((t) => {
+      const target = tab.dataset.installTab;
+      document.querySelectorAll('[data-install-tab]').forEach((t) => {
         const active = t === tab;
         t.classList.toggle('is-active', active);
-        t.setAttribute('aria-selected', active ? 'true' : 'false');
+        t.setAttribute('aria-selected', String(active));
       });
-      deployPanels.forEach((panel) => {
-        const active = panel.dataset.panel === target;
-        panel.classList.toggle('is-active', active);
-        panel.hidden = !active;
+      document.querySelectorAll('[data-install-pane]').forEach((pane) => {
+        const active = pane.dataset.installPane === target;
+        pane.classList.toggle('is-active', active);
+        pane.hidden = !active;
       });
-    });
-  });
-
-  document.querySelectorAll('.code-copy').forEach((button) => {
-    button.addEventListener('click', async () => {
-      const code = document.getElementById(button.dataset.copy);
-      if (!code) return;
-      const ok = await copyText(code.textContent.trim());
-      flashCopied(button, true);
-      toast(ok ? 'Command copied to clipboard' : 'Select the command to copy it');
-    });
-  });
-
-  /* ---------- bento spotlight ---------- */
-  document.querySelectorAll('[data-spotlight]').forEach((card) => {
-    card.addEventListener('pointermove', (event) => {
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty('--sx', (((event.clientX - rect.left) / rect.width) * 100).toFixed(1) + '%');
-      card.style.setProperty('--sy', (((event.clientY - rect.top) / rect.height) * 100).toFixed(1) + '%');
     });
   });
 })();

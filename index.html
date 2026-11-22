@@ -3,513 +3,471 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="OpenSync is a self-hosted LAN game archive with differential save sync, streaming downloads, and a native desktop launcher.">
-  <meta name="theme-color" content="#0a0a0c">
-  <title>OpenSync — Self-hosted game archive</title>
+  <meta name="description" content="OpenSync is a self-hosted LAN game archive with differential save sync, streaming downloads, and a native desktop launcher for Linux and Windows.">
+  <meta name="theme-color" content="#0c0d10">
+  <title>OpenSync — Self-hosted game library and save sync</title>
   <link rel="icon" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
-  <div class="ambient" aria-hidden="true"></div>
-
   <header class="topbar" id="topbar">
     <div class="topbar-inner">
-      <a class="logo" href="#library" aria-label="OpenSync home">
-        <img src="assets/opensync-nav-2x.png" alt="OpenSync" width="150" height="34">
+      <a class="logo" href="#overview" aria-label="OpenSync home">
+        <img src="assets/opensync-nav-2x.png" alt="OpenSync" width="142" height="32">
       </a>
-      <nav class="nav" aria-label="Main navigation">
-        <a href="#library" class="active" data-nav="library">Library</a>
-        <a href="#sync" data-nav="sync">How sync works</a>
-        <a href="#launcher" data-nav="launcher">Launcher</a>
-        <a href="#deploy" data-nav="deploy">Deploy</a>
+      <nav class="nav" aria-label="Sections">
+        <a href="#overview" class="active" data-nav="overview">Overview</a>
+        <a href="#sync" data-nav="sync">Differential sync</a>
+        <a href="#launcher" data-nav="launcher">Desktop launcher</a>
+        <a href="#stack" data-nav="stack">Architecture</a>
+        <a href="#install" data-nav="install">Install</a>
       </nav>
-      <div class="topbar-right">
-        <a class="btn btn-ghost topbar-ghost" href="https://github.com/piskevalee-cpu/OpenSync" target="_blank" rel="noopener">GitHub</a>
-        <a class="btn btn-primary btn-sm" href="#deploy">Deploy server</a>
+      <div class="topbar-actions">
+        <a class="btn btn-ghost btn-sm" href="https://github.com/piskevalee-cpu/OpenSync" target="_blank" rel="noopener">Source</a>
+        <a class="btn btn-primary btn-sm" href="#install">Get the launcher</a>
       </div>
     </div>
   </header>
 
   <main>
-    <section class="hero" id="library">
+    <section class="hero" id="overview">
       <div class="hero-copy">
-        <div class="hero-kicker"><span class="live-dot"></span> Self-hosted, open source, yours to keep</div>
-        <h1 class="hero-title">
-          <span class="title-line">GAME ARCHIVE</span>
-          <span class="title-line">DIFFERENTIAL SYNC</span>
-        </h1>
-        <p class="hero-sub">One archive for your offline library. Upload games once, keep every player's saves private, and stream a fresh or fully restored copy across your LAN in seconds.</p>
+        <div class="hero-brand-lockup">
+          <img src="assets/icon.png" alt="OpenSync application icon" width="44" height="44" class="hero-app-icon">
+          <span class="hero-release-note">OpenSync Server &amp; Launcher v0.1.0</span>
+        </div>
+        <h1 class="hero-title">Your offline games, synced on your hardware.</h1>
+        <p class="hero-lead">Store uncompressed game folders on your home server or NAS. Stream copies over LAN in seconds, keep every player's saves isolated on top of a clean baseline, and play through the native desktop launcher.</p>
 
-        <button class="install-pill" id="install-pill" type="button" title="Click to copy the install command">
-          <span class="prompt">$</span>
-          <code id="install-command">curl -fsSL https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/install.sh | bash</code>
-          <span class="copy-action" id="install-copy" aria-label="Copy install command">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            <span>Copy</span>
-          </span>
-        </button>
-
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#deploy">Deploy server</a>
-          <a class="btn btn-outline" href="#launcher">Explore launcher</a>
+        <div class="install-command-box">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code id="hero-cmd">curl -fsSL https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/install.sh | bash</code>
+          <button type="button" class="cmd-copy-btn" data-copy="hero-cmd">Copy command</button>
         </div>
 
-        <div class="hero-facts">
-          <div class="fact"><span class="fact-num">4 MB</span><span class="fact-label">resumable chunks</span></div>
-          <div class="fact"><span class="fact-num">STORE</span><span class="fact-label">wire-speed streams</span></div>
-          <div class="fact"><span class="fact-num">0</span><span class="fact-label">external services</span></div>
+        <div class="hero-cta-row">
+          <a class="btn btn-primary" href="#install">Download launcher</a>
+          <a class="btn btn-secondary" href="#launcher">See launcher features</a>
         </div>
       </div>
 
-      <div class="hero-showcase" aria-label="Game library preview">
-        <div class="capsule-grid" id="capsule-grid">
-
-          <article class="capsule-card steam-card is-active" data-game="0" tabindex="0" aria-label="Preview Hollow Peak">
-            <div class="capsule-art">
-              <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Hollow Peak cover art">
-                <defs>
-                  <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#071018"/><stop offset="0.5" stop-color="#0d2630"/><stop offset="1" stop-color="#123b3a"/></linearGradient>
-                  <linearGradient id="aur1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dfa9b" stop-opacity="0.0"/><stop offset="0.5" stop-color="#7dfa9b" stop-opacity="0.35"/><stop offset="1" stop-color="#6bb3ff" stop-opacity="0"/></linearGradient>
-                  <radialGradient id="moon1"><stop offset="0" stop-color="#eafff2"/><stop offset="1" stop-color="#7dfa9b" stop-opacity="0"/></radialGradient>
-                </defs>
-                <rect width="400" height="600" fill="url(#sky1)"/>
-                <circle cx="290" cy="150" r="120" fill="url(#moon1)" opacity="0.5"/>
-                <circle cx="290" cy="150" r="42" fill="#eafff2" opacity="0.9"/>
-                <path d="M-20 250 Q120 120 260 230 T460 180 L460 0 L-20 0 Z" fill="url(#aur1)" opacity="0.55"/>
-                <path d="M-20 330 Q160 200 420 320 L420 0 L-20 0 Z" fill="#6bb3ff" opacity="0.07"/>
-                <g opacity="0.9">
-                  <path d="M-20 600 L120 330 L200 450 L280 300 L420 600 Z" fill="#0a1418"/>
-                  <path d="M120 330 L200 450 L150 600 L-20 600 Z" fill="#0e1e22"/>
-                  <path d="M280 300 L420 600 L300 600 L240 470 Z" fill="#0c1a1e"/>
-                  <path d="M120 330 L150 270 L180 330 L200 450 Z" fill="#123039"/>
-                </g>
-                <g stroke="#7dfa9b" stroke-width="1" opacity="0.25"><path d="M40 420 h60"/><path d="M300 380 h50"/><path d="M220 520 h80"/></g>
-                <g fill="#eafff2" opacity="0.6"><circle cx="60" cy="90" r="1.4"/><circle cx="120" cy="140" r="1"/><circle cx="350" cy="80" r="1.2"/><circle cx="200" cy="60" r="1"/><circle cx="90" cy="200" r="0.9"/></g>
-                <rect width="400" height="600" fill="url(#aur1)" opacity="0.12"/>
-              </svg>
-              <div class="card-glass-sheen"></div>
+      <div class="launcher-stage" aria-label="Interactive OpenSync Launcher preview">
+        <div class="launcher-window" id="hero-launcher">
+          <div class="lw-topbar">
+            <div class="lw-left">
+              <img src="assets/opensync-nav-2x.png" alt="" height="20" class="lw-wordmark">
+              <nav class="lw-tabs" aria-label="Launcher views preview">
+                <span class="lw-tab is-active">library</span>
+                <span class="lw-tab">downloads</span>
+                <span class="lw-tab">settings</span>
+              </nav>
             </div>
-            <span class="badge capsule-badge badge-synced">Synced</span>
-            <button class="card-play" type="button" aria-label="Play Hollow Peak">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <div class="card-glass-footer">
-              <div class="card-glass-info">
-                <span class="card-glass-title">Hollow Peak</span>
-                <div class="card-glass-meta">
-                  <span class="card-stat-ticker"><span class="card-stat-item is-entering" data-stats="12.4 h played,Ready to play,2.1 GB installed,Last sync 4m ago">12.4 h played</span></span>
-                </div>
-              </div>
-              <span class="card-dl" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-              </span>
+            <div class="lw-right">
+              <button type="button" class="lw-chip" id="lw-activity-btn" aria-expanded="false">
+                <span class="lw-chip-dot" id="lw-sync-dot"></span>
+                <span id="lw-activity-label">Activity</span>
+                <span class="lw-count" id="lw-activity-count">2</span>
+              </button>
+              <span class="lw-conn"><i aria-hidden="true"></i>Connected</span>
+              <span class="lw-profile"><span class="lw-avatar">V</span><span>valerio</span></span>
             </div>
-          </article>
-
-          <article class="capsule-card steam-card" data-game="1" tabindex="0" aria-label="Preview Neon Drift">
-            <div class="capsule-art">
-              <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Neon Drift cover art">
-                <defs>
-                  <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0714"/><stop offset="0.55" stop-color="#25103a"/><stop offset="1" stop-color="#4a1246"/></linearGradient>
-                  <linearGradient id="road2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#120820"/><stop offset="1" stop-color="#05030c"/></linearGradient>
-                  <radialGradient id="glow2"><stop offset="0" stop-color="#ff5fa2" stop-opacity="0.7"/><stop offset="1" stop-color="#ff5fa2" stop-opacity="0"/></radialGradient>
-                </defs>
-                <rect width="400" height="600" fill="url(#sky2)"/>
-                <circle cx="200" cy="250" r="160" fill="url(#glow2)"/>
-                <circle cx="200" cy="250" r="70" fill="#ff8ac4" opacity="0.22"/>
-                <g fill="#0b0616">
-                  <rect x="0" y="120" width="60" height="290"/><rect x="70" y="180" width="55" height="230"/><rect x="135" y="90" width="48" height="320"/>
-                  <rect x="210" y="160" width="62" height="250"/><rect x="285" y="110" width="50" height="300"/><rect x="345" y="200" width="55" height="210"/>
-                </g>
-                <g fill="#6bb3ff" opacity="0.85"><rect x="14" y="150" width="6" height="10"/><rect x="30" y="180" width="6" height="10"/><rect x="86" y="210" width="6" height="10"/><rect x="150" y="130" width="6" height="10"/><rect x="166" y="170" width="6" height="10"/><rect x="228" y="200" width="6" height="10"/><rect x="300" y="150" width="6" height="10"/><rect x="360" y="240" width="6" height="10"/></g>
-                <g fill="#ff5fa2" opacity="0.9"><rect x="100" y="240" width="5" height="9"/><rect x="245" y="140" width="5" height="9"/><rect x="320" y="200" width="5" height="9"/><rect x="48" y="260" width="5" height="9"/></g>
-                <path d="M150 600 L185 330 L215 330 L260 600 Z" fill="url(#road2)"/>
-                <g stroke="#ff5fa2" stroke-width="2" opacity="0.8"><path d="M196 360 v18"/><path d="M193 400 v26"/><path d="M189 450 v38"/><path d="M184 515 v60"/></g>
-                <g stroke="#6bb3ff" stroke-width="1" opacity="0.5"><path d="M0 420 h400"/><path d="M0 470 h400"/></g>
-              </svg>
-              <div class="card-glass-sheen"></div>
-            </div>
-            <span class="badge capsule-badge badge-ready">Ready</span>
-            <button class="card-play" type="button" aria-label="Play Neon Drift">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <div class="card-glass-footer">
-              <div class="card-glass-info">
-                <span class="card-glass-title">Neon Drift</span>
-                <div class="card-glass-meta">
-                  <span class="card-stat-ticker"><span class="card-stat-item is-entering" data-stats="6.8 h played,Installed,3.4 GB,Overlay clean">6.8 h played</span></span>
-                </div>
-              </div>
-              <span class="card-dl" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-              </span>
-            </div>
-          </article>
-
-          <article class="capsule-card steam-card" data-game="2" tabindex="0" aria-label="Preview Emberfall">
-            <div class="capsule-art">
-              <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Emberfall cover art">
-                <defs>
-                  <linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a0c08"/><stop offset="0.5" stop-color="#5a2210"/><stop offset="1" stop-color="#a8481c"/></linearGradient>
-                  <radialGradient id="sun3"><stop offset="0" stop-color="#ffe8a3"/><stop offset="0.6" stop-color="#ffd166"/><stop offset="1" stop-color="#ff8a3d" stop-opacity="0"/></radialGradient>
-                </defs>
-                <rect width="400" height="600" fill="url(#sky3)"/>
-                <circle cx="200" cy="270" r="150" fill="url(#sun3)" opacity="0.85"/>
-                <circle cx="200" cy="270" r="64" fill="#ffe9b0" opacity="0.92"/>
-                <path d="M0 330 L80 280 L140 330 L200 250 L280 340 L340 290 L400 340 L400 600 L0 600 Z" fill="#2a1109" opacity="0.75"/>
-                <path d="M0 420 L60 380 L130 430 L210 360 L300 440 L360 400 L400 430 L400 600 L0 600 Z" fill="#160a06"/>
-                <g fill="#0c0503"><rect x="150" y="300" width="16" height="120"/><rect x="180" y="280" width="20" height="140"/><polygon points="175,280 190,255 205,280"/><rect x="250" y="340" width="12" height="80"/></g>
-                <g fill="#ffd166" opacity="0.55"><circle cx="90" cy="450" r="2"/><circle cx="320" cy="400" r="2"/><circle cx="130" cy="500" r="1.6"/><circle cx="280" cy="520" r="1.6"/></g>
-                <path d="M0 600 Q100 520 200 590 T400 570 L400 600 Z" fill="#080301"/>
-              </svg>
-              <div class="card-glass-sheen"></div>
-            </div>
-            <span class="badge capsule-badge badge-processing">Sync pending</span>
-            <button class="card-play" type="button" aria-label="Play Emberfall">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <div class="card-glass-footer">
-              <div class="card-glass-info">
-                <span class="card-glass-title">Emberfall</span>
-                <div class="card-glass-meta">
-                  <span class="card-stat-ticker"><span class="card-stat-item is-entering" data-stats="31.2 h played,1 save queued,5.8 GB,Last sync 2d ago">31.2 h played</span></span>
-                </div>
-              </div>
-              <span class="card-dl" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-              </span>
-            </div>
-          </article>
-
-          <article class="capsule-card steam-card" data-game="3" tabindex="0" aria-label="Preview Deep Signal">
-            <div class="capsule-art">
-              <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Deep Signal cover art">
-                <defs>
-                  <radialGradient id="neb4"><stop offset="0" stop-color="#6bb3ff" stop-opacity="0.5"/><stop offset="0.5" stop-color="#5b6bff" stop-opacity="0.2"/><stop offset="1" stop-color="#0a0a0c" stop-opacity="0"/></radialGradient>
-                  <radialGradient id="planet4"><stop offset="0.3" stop-color="#9fd2ff"/><stop offset="0.8" stop-color="#2f5fa8"/><stop offset="1" stop-color="#0a1830"/></radialGradient>
-                  <linearGradient id="ring4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dfa9b"/><stop offset="1" stop-color="#6bb3ff"/></linearGradient>
-                </defs>
-                <rect width="400" height="600" fill="#06070f"/>
-                <ellipse cx="180" cy="240" rx="220" ry="180" fill="url(#neb4)"/>
-                <ellipse cx="300" cy="420" rx="160" ry="140" fill="url(#neb4)" opacity="0.6"/>
-                <g fill="#e6e6e6"><circle cx="40" cy="80" r="1.2"/><circle cx="90" cy="160" r="0.9"/><circle cx="140" cy="60" r="1.4"/><circle cx="260" cy="100" r="1"/><circle cx="340" cy="70" r="1.3"/><circle cx="370" cy="200" r="0.9"/><circle cx="60" cy="300" r="1.1"/><circle cx="300" cy="540" r="1.2"/><circle cx="120" cy="500" r="0.9"/></g>
-                <circle cx="205" cy="290" r="96" fill="url(#planet4)"/>
-                <ellipse cx="205" cy="290" rx="150" ry="34" fill="none" stroke="url(#ring4)" stroke-width="6" opacity="0.7" transform="rotate(-22 205 290)"/>
-                <path d="M0 480 Q120 430 220 490 T400 470 L400 600 L0 600 Z" fill="#070a14"/>
-                <path d="M0 520 Q160 470 400 530 L400 600 L0 600 Z" fill="#04050b"/>
-              </svg>
-              <div class="card-glass-sheen"></div>
-            </div>
-            <span class="badge capsule-badge badge-synced">Synced</span>
-            <button class="card-play" type="button" aria-label="Play Deep Signal">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <div class="card-glass-footer">
-              <div class="card-glass-info">
-                <span class="card-glass-title">Deep Signal</span>
-                <div class="card-glass-meta">
-                  <span class="card-stat-ticker"><span class="card-stat-item is-entering" data-stats="18.6 h played,Ready to play,7.2 GB,Overlay clean">18.6 h played</span></span>
-                </div>
-              </div>
-              <span class="card-dl" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-              </span>
-            </div>
-          </article>
-
-          <article class="capsule-card steam-card" data-game="4" tabindex="0" aria-label="Preview Verdant">
-            <div class="capsule-art">
-              <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Verdant cover art">
-                <defs>
-                  <linearGradient id="sky5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1712"/><stop offset="0.5" stop-color="#17362a"/><stop offset="1" stop-color="#2a5a3c"/></linearGradient>
-                  <radialGradient id="mist5"><stop offset="0" stop-color="#7dfa9b" stop-opacity="0.35"/><stop offset="1" stop-color="#7dfa9b" stop-opacity="0"/></radialGradient>
-                </defs>
-                <rect width="400" height="600" fill="url(#sky5)"/>
-                <ellipse cx="200" cy="360" rx="220" ry="160" fill="url(#mist5)"/>
-                <g stroke="#07130e" stroke-width="10" opacity="0.9"><path d="M40 600 V180"/><path d="M110 600 V120"/><path d="M300 600 V140"/><path d="M370 600 V200"/></g>
-                <g fill="#0c2418"><path d="M40 180 l-50 -60 h100 Z"/><path d="M40 250 l-60 -70 h120 Z"/><path d="M110 120 l-55 -70 h110 Z"/><path d="M110 210 l-65 -80 h130 Z"/><path d="M300 140 l-55 -70 h110 Z"/><path d="M300 240 l-65 -80 h130 Z"/><path d="M370 200 l-45 -60 h90 Z"/></g>
-                <g fill="#7dfa9b" opacity="0.2"><circle cx="80" cy="330" r="3"/><circle cx="330" cy="300" r="3"/><circle cx="200" cy="380" r="2"/><circle cx="150" cy="430" r="2.5"/><circle cx="260" cy="450" r="2"/></g>
-                <path d="M0 470 Q100 440 200 480 T400 460 L400 600 L0 600 Z" fill="#08190f"/>
-                <path d="M0 530 Q160 490 400 540 L400 600 L0 600 Z" fill="#050e09"/>
-              </svg>
-              <div class="card-glass-sheen"></div>
-            </div>
-            <span class="badge capsule-badge badge-ready">Ready</span>
-            <button class="card-play" type="button" aria-label="Play Verdant">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <div class="card-glass-footer">
-              <div class="card-glass-info">
-                <span class="card-glass-title">Verdant</span>
-                <div class="card-glass-meta">
-                  <span class="card-stat-ticker"><span class="card-stat-item is-entering" data-stats="9.1 h played,Installed,2.6 GB,Overlay clean">9.1 h played</span></span>
-                </div>
-              </div>
-              <span class="card-dl" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-              </span>
-            </div>
-          </article>
-
-          <article class="capsule-card steam-card" data-game="5" tabindex="0" aria-label="Preview Iron Meridian">
-            <div class="capsule-art">
-              <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Iron Meridian cover art">
-                <defs>
-                  <linearGradient id="sky6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0b10"/><stop offset="0.6" stop-color="#2a2118"/><stop offset="1" stop-color="#5c4526"/></linearGradient>
-                  <linearGradient id="metal6" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd166"/><stop offset="0.5" stop-color="#a8781f"/><stop offset="1" stop-color="#3a2a12"/></linearGradient>
-                </defs>
-                <rect width="400" height="600" fill="url(#sky6)"/>
-                <circle cx="200" cy="230" r="130" fill="#ffd166" opacity="0.08"/>
-                <circle cx="200" cy="230" r="90" fill="none" stroke="#ffd166" stroke-width="1" opacity="0.3"/>
-                <circle cx="200" cy="230" r="64" fill="none" stroke="#ffd166" stroke-width="2" opacity="0.4"/>
-                <g fill="url(#metal6)" opacity="0.9">
-                  <polygon points="200,120 250,190 230,300 170,300 150,190"/>
-                  <polygon points="150,190 110,230 130,330 170,300"/>
-                  <polygon points="250,190 290,230 270,330 230,300"/>
-                  <polygon points="170,300 230,300 250,430 150,430"/>
-                </g>
-                <g fill="#0b0b10"><polygon points="170,200 190,210 185,240 165,230"/><polygon points="230,200 210,210 215,240 235,230"/><rect x="182" y="250" width="36" height="8"/></g>
-                <path d="M0 440 L400 440 L400 600 L0 600 Z" fill="#0a0a0c"/>
-                <g stroke="#ffd166" stroke-width="1" opacity="0.35"><path d="M0 470 h400"/><path d="M0 520 h400"/><path d="M80 440 v160"/><path d="M320 440 v160"/></g>
-              </svg>
-              <div class="card-glass-sheen"></div>
-            </div>
-            <span class="badge capsule-badge badge-synced">Synced</span>
-            <button class="card-play" type="button" aria-label="Play Iron Meridian">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <div class="card-glass-footer">
-              <div class="card-glass-info">
-                <span class="card-glass-title">Iron Meridian</span>
-                <div class="card-glass-meta">
-                  <span class="card-stat-ticker"><span class="card-stat-item is-entering" data-stats="44.7 h played,Ready to play,11.3 GB,Overlay clean">44.7 h played</span></span>
-                </div>
-              </div>
-              <span class="card-dl" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-              </span>
-            </div>
-          </article>
-
-        </div>
-
-        <div class="preview-panel" id="preview-panel" aria-live="polite">
-          <div class="preview-identity">
-            <span class="preview-eyebrow">Now previewing</span>
-            <span class="preview-name" id="preview-name">Hollow Peak</span>
           </div>
-          <div class="preview-stats">
-            <div><span class="preview-stat-label">Save state</span><span class="preview-stat-value" id="preview-state">Overlay current</span></div>
-            <div><span class="preview-stat-label">Local save</span><span class="preview-stat-value" id="preview-size">128 MB</span></div>
-            <div><span class="preview-stat-label">Last sync</span><span class="preview-stat-value" id="preview-sync">4 minutes ago</span></div>
+
+          <div class="lw-activity-popover" id="lw-activity-popover" hidden>
+            <div class="lw-pop-head">
+              <span>Sync and launch log</span>
+              <button type="button" class="lw-pop-close" id="lw-pop-close" aria-label="Close activity log">&times;</button>
+            </div>
+            <div class="lw-pop-list" id="lw-pop-list"></div>
           </div>
-          <span class="preview-badge" id="preview-badge">Ready to play</span>
+
+          <div class="lw-body">
+            <div class="lw-bar">
+              <span class="lw-heading">GAME LIBRARY</span>
+              <span class="lw-status-note" id="lw-session-note">Click Play on a game to simulate a launch and post-exit auto-sync.</span>
+            </div>
+
+            <div class="lw-cards" id="lw-cards">
+              <article class="capsule-card" data-game="0" tabindex="0">
+                <div class="capsule-art">
+                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Fogwoods cover">
+                    <defs>
+                      <linearGradient id="c1sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1b1e"/><stop offset="0.55" stop-color="#14302c"/><stop offset="1" stop-color="#080c0d"/></linearGradient>
+                      <radialGradient id="c1glow" cx="52%" cy="32%" r="48%"><stop offset="0" stop-color="#7dfa9b" stop-opacity="0.34"/><stop offset="1" stop-color="#080c0d" stop-opacity="0"/></radialGradient>
+                    </defs>
+                    <rect width="400" height="600" fill="url(#c1sky)"/>
+                    <rect width="400" height="600" fill="url(#c1glow)"/>
+                    <circle cx="215" cy="228" r="46" fill="#d9ffe4" opacity="0.82"/>
+                    <path d="M0 370 L85 285 L160 325 L250 245 L335 315 L400 265 L400 600 L0 600 Z" fill="#0d1919"/>
+                    <path d="M0 440 L95 365 L205 420 L315 350 L400 400 L400 600 L0 600 Z" fill="#081011"/>
+                    <text x="28" y="138" fill="#d8ffe1" font-family="Inter, sans-serif" font-weight="800" font-size="32" letter-spacing="1.5">FOGWOODS</text>
+                  </svg>
+                  <div class="card-glass-sheen"></div>
+                </div>
+                <span class="capsule-state state-synced" data-card-badge="0">Synced</span>
+                <button type="button" class="card-play" data-play-index="0" aria-label="Play Fogwoods">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="card-glass-footer">
+                  <div class="card-glass-info">
+                    <span class="card-glass-title">Fogwoods</span>
+                    <span class="card-glass-meta" data-card-meta="0">1.84 GB &middot; Native Linux</span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="capsule-card" data-game="1" tabindex="0">
+                <div class="capsule-art">
+                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Cyber Runner 2077 cover">
+                    <defs>
+                      <linearGradient id="c2sky" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#140c24"/><stop offset="0.55" stop-color="#1f1136"/><stop offset="1" stop-color="#090a12"/></linearGradient>
+                      <radialGradient id="c2glow" cx="68%" cy="30%" r="55%"><stop offset="0" stop-color="#ff4d94" stop-opacity="0.38"/><stop offset="1" stop-color="#090a12" stop-opacity="0"/></radialGradient>
+                    </defs>
+                    <rect width="400" height="600" fill="url(#c2sky)"/>
+                    <rect width="400" height="600" fill="url(#c2glow)"/>
+                    <g fill="#0c0b16">
+                      <rect x="28" y="255" width="58" height="345"/><rect x="96" y="210" width="66" height="390"/>
+                      <rect x="174" y="175" width="76" height="425"/><rect x="262" y="225" width="60" height="375"/>
+                      <rect x="330" y="195" width="58" height="405"/>
+                    </g>
+                    <line x1="0" y1="420" x2="400" y2="365" stroke="#7dfa9b" stroke-width="2.5" opacity="0.75"/>
+                    <text x="28" y="138" fill="#ffffff" font-family="Inter, sans-serif" font-weight="800" font-size="28" letter-spacing="1.2">CYBER RUNNER</text>
+                  </svg>
+                  <div class="card-glass-sheen"></div>
+                </div>
+                <span class="capsule-state state-proton" data-card-badge="1">GE-Proton</span>
+                <button type="button" class="card-play" data-play-index="1" aria-label="Play Cyber Runner 2077">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="card-glass-footer">
+                  <div class="card-glass-info">
+                    <span class="card-glass-title">Cyber Runner 2077</span>
+                    <span class="card-glass-meta" data-card-meta="1">28.6 GB &middot; Proton 9</span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="capsule-card" data-game="2" tabindex="0">
+                <div class="capsule-art">
+                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Hollow Spire cover">
+                    <defs>
+                      <linearGradient id="c3sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#11131e"/><stop offset="0.55" stop-color="#1b2033"/><stop offset="1" stop-color="#090a0f"/></linearGradient>
+                    </defs>
+                    <rect width="400" height="600" fill="url(#c3sky)"/>
+                    <circle cx="200" cy="245" r="64" fill="#e6f2ff" opacity="0.88"/>
+                    <circle cx="222" cy="230" r="58" fill="#171b2b"/>
+                    <path d="M160 600 L182 260 L200 185 L218 260 L240 600 Z" fill="#0b0d14"/>
+                    <circle cx="200" cy="300" r="8" fill="#6bb3ff"/>
+                    <text x="28" y="138" fill="#e8f1ff" font-family="Inter, sans-serif" font-weight="800" font-size="29" letter-spacing="1.2">HOLLOW SPIRE</text>
+                  </svg>
+                  <div class="card-glass-sheen"></div>
+                </div>
+                <span class="capsule-state state-pending" data-card-badge="2">1 queued</span>
+                <button type="button" class="card-play" data-play-index="2" aria-label="Play Hollow Spire">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="card-glass-footer">
+                  <div class="card-glass-info">
+                    <span class="card-glass-title">Hollow Spire</span>
+                    <span class="card-glass-meta" data-card-meta="2">4.12 GB &middot; Offline sync</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <button type="button" class="lw-fab" id="lw-fab-upload" title="Jump to parallel uploader preview" aria-label="Jump to parallel uploader preview">+</button>
+          </div>
+
+          <div class="lw-sync-banner" id="lw-sync-banner" hidden>
+            <span class="lw-sync-spinner" id="lw-sync-spinner" aria-hidden="true"></span>
+            <div class="lw-sync-copy">
+              <div class="lw-sync-title" id="lw-sync-title">Game closed. Auto-syncing saves...</div>
+              <div class="lw-sync-sub" id="lw-sync-sub">Uploading changed chunks to your overlay</div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="section" id="sync">
-      <div class="section-head">
-        <div>
-          <span class="section-kicker">Under the hood</span>
-          <h2 class="section-title">Differential save sync</h2>
-        </div>
-        <p class="section-lead">A clean manifest per game, a private overlay per player. Only changed chunks travel, and downloads merge <code>clean + overlay − deletions</code> on the fly.</p>
+      <div class="section-header">
+        <h2 class="section-heading">Differential save sync</h2>
+        <p class="section-copy">Games live on the server as plain directories rather than locked archives. Every player syncs only the files that differ from the shared clean manifest, so gigabyte asset packs never move twice and player saves never collide.</p>
       </div>
 
-      <div class="explorer">
-        <div class="explorer-nodes" role="tablist" aria-label="Sync pipeline stages">
-          <button class="explorer-node is-active" role="tab" aria-selected="true" data-mode="clean">
-            <span class="node-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>
-            <span class="node-text"><strong>Clean manifest</strong><small>Baseline from the server</small></span>
-            <span class="node-index">01</span>
+      <div class="diff-workbench">
+        <div class="diff-modes" role="tablist" aria-label="Save sync state examples">
+          <button type="button" class="diff-tab is-active" role="tab" aria-selected="true" data-mode="clean">
+            <strong>Clean manifest</strong>
+            <span>Original uploaded files hashed once</span>
           </button>
-          <button class="explorer-node" role="tab" aria-selected="false" data-mode="usera">
-            <span class="node-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
-            <span class="node-text"><strong>User A overlay</strong><small>Changed save chunks</small></span>
-            <span class="node-index">02</span>
+          <button type="button" class="diff-tab" role="tab" aria-selected="false" data-mode="usera">
+            <strong>Player A overlay</strong>
+            <span>Two changed save files uploaded in chunks</span>
           </button>
-          <button class="explorer-node" role="tab" aria-selected="false" data-mode="userb">
-            <span class="node-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/><path d="M9 9h6"/></svg></span>
-            <span class="node-text"><strong>User B overlay</strong><small>Different progress, isolated</small></span>
-            <span class="node-index">03</span>
+          <button type="button" class="diff-tab" role="tab" aria-selected="false" data-mode="userb">
+            <strong>Player B overlay</strong>
+            <span>Independent save plus a tracked deletion</span>
           </button>
-          <button class="explorer-node" role="tab" aria-selected="false" data-mode="merge">
-            <span class="node-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h6l4 6-4 6H4"/><path d="M14 12h6"/></svg></span>
-            <span class="node-text"><strong>Streaming merge</strong><small>Zip assembled on download</small></span>
-            <span class="node-index">04</span>
+          <button type="button" class="diff-tab" role="tab" aria-selected="false" data-mode="merge">
+            <strong>Download stream</strong>
+            <span>Server merges clean + overlay minus deletions live</span>
           </button>
         </div>
 
-        <div class="explorer-console">
-          <div class="console-head">
-            <div class="console-dots"><i></i><i></i><i></i></div>
-            <span class="console-title" id="console-title">Clean manifest</span>
-            <span class="console-meta" id="console-meta">6 files tracked</span>
+        <div class="diff-panel">
+          <div class="diff-panel-head">
+            <span class="diff-panel-title" id="diff-title">Clean manifest</span>
+            <span class="diff-panel-meta" id="diff-meta">6 files indexed</span>
           </div>
-          <div class="console-note" id="console-note">The server hashes every clean file once at upload. This baseline never changes.</div>
-          <div class="filetree" id="filetree" aria-live="polite"></div>
-          <div class="console-foot">
-            <span class="legend"><i class="legend-dot legend-skip"></i> Unchanged, skipped</span>
-            <span class="legend"><i class="legend-dot legend-change"></i> Changed, uploaded</span>
-            <span class="legend"><i class="legend-dot legend-delete"></i> Deleted, excluded</span>
-          </div>
+          <p class="diff-panel-note" id="diff-note"></p>
+          <div class="diff-rows" id="diff-rows" aria-live="polite"></div>
         </div>
       </div>
     </section>
 
     <section class="section" id="launcher">
-      <div class="section-head">
-        <div>
-          <span class="section-kicker">OpenSync launcher</span>
-          <h2 class="section-title">Downloads you can watch</h2>
-        </div>
-        <p class="section-lead">The native desktop client streams STORE zips straight to disk with no temp archives. Scrub the live throughput curve to feel the wire-speed difference.</p>
+      <div class="section-header">
+        <h2 class="section-heading">Built for real play sessions</h2>
+        <p class="section-copy">The Rust and Tauri desktop client handles installs, compatibility layers, uploads, and unexpected exits without touching the command line.</p>
       </div>
 
-      <div class="launcher-grid">
-        <div class="wave-card">
-          <div class="wave-top">
-            <div class="wave-title-wrap">
-              <img src="assets/icon.png" alt="" class="wave-app-icon" width="40" height="40">
-              <div>
-                <div class="wave-title">Download Manager</div>
-                <div class="wave-subtitle" id="wave-status">Streaming at wire speed</div>
+      <div class="console-switcher" role="tablist" aria-label="Launcher capabilities">
+        <button type="button" class="console-tab is-active" role="tab" aria-selected="true" data-console="downloads">Streaming downloads</button>
+        <button type="button" class="console-tab" role="tab" aria-selected="false" data-console="uploads">Parallel game uploads</button>
+        <button type="button" class="console-tab" role="tab" aria-selected="false" data-console="recovery">Crash recovery &amp; safe quit</button>
+      </div>
+
+      <div class="console-stage">
+        <div class="console-pane is-active" data-pane="downloads">
+          <div class="wave-layout">
+            <div class="wave-surface">
+              <div class="wave-header">
+                <div>
+                  <div class="wave-name">Cyber Runner 2077</div>
+                  <div class="wave-state" id="wave-status">Streaming uncompressed STORE zip straight to disk</div>
+                </div>
+                <div class="wave-metric" id="wave-rate">98.4 MB/s</div>
+              </div>
+              <div class="wave-canvas-wrap" id="wave-wrap">
+                <canvas id="wave-canvas" aria-label="Interactive download speed graph"></canvas>
+                <div class="wave-tooltip" id="wave-tooltip" hidden>
+                  <strong id="tt-rate">0 MB/s</strong>
+                  <span id="tt-time">now</span>
+                </div>
+              </div>
+              <div class="wave-progress-row">
+                <div class="wave-track"><span class="wave-fill" id="wave-progress-bar" style="width:64%"></span></div>
+                <span class="wave-bytes" id="wave-bytes">7.8 / 12.2 GB</span>
+              </div>
+              <div class="wave-controls" role="group" aria-label="Bandwidth limit">
+                <button type="button" class="ctrl-btn is-active" data-wave-mode="store">Unlimited (STORE)</button>
+                <button type="button" class="ctrl-btn" data-wave-mode="throttle">Cap at 50 MB/s</button>
+                <button type="button" class="ctrl-btn" data-wave-mode="paused">Pause transfer</button>
               </div>
             </div>
-            <div class="wave-readout">
-              <span class="wave-rate" id="wave-rate">0 MB/s</span>
-              <span class="wave-rate-label">instantaneous</span>
+
+            <div class="console-sidebar">
+              <h3>Wire speed with zero temp zip</h3>
+              <p>OpenSync streams STORE archives over HTTP with compression off by default, extracting entries straight to your target folder while checking SHA-256 digests on the fly.</p>
+              <dl class="spec-pairs">
+                <div><dt>Compression</dt><dd>Off by default (STORE), optional deflate level 1 to 9</dd></div>
+                <div><dt>Resumable</dt><dd>Pause, resume, cancel, or cap bandwidth per transfer</dd></div>
+                <div><dt>Runtime setup</dt><dd>Detects Steam Proton installs and fetches GE-Proton in one click</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+
+        <div class="console-pane" data-pane="uploads" hidden>
+          <div class="wave-layout">
+            <div class="wave-surface">
+              <div class="wave-header">
+                <div>
+                  <div class="wave-name">6-worker parallel folder upload</div>
+                  <div class="wave-state" id="upload-status">Largest files scheduled first across 6 workers in 4 MB chunks</div>
+                </div>
+                <button type="button" class="ctrl-btn" id="btn-run-upload-demo">Run upload pass</button>
+              </div>
+              <div class="upload-workers" id="upload-workers"></div>
+            </div>
+
+            <div class="console-sidebar">
+              <h3>Fast LAN uploads from the library</h3>
+              <p>Click the circular + button in the library to pick or drop any game folder. Files are hashed locally, scheduled largest-first to eliminate tail latency, and streamed in resumable 4 MB chunks.</p>
+              <dl class="spec-pairs">
+                <div><dt>Scheduling</dt><dd>Longest-Processing-Time queue across 6 concurrent workers</dd></div>
+                <div><dt>Manifest indexing</dt><dd>Server hashes files in parallel after final chunk arrives</dd></div>
+                <div><dt>Navigation</dt><dd>Transfers survive view switches with global progress indicator</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+
+        <div class="console-pane" data-pane="recovery" hidden>
+          <div class="wave-layout">
+            <div class="wave-surface">
+              <div class="wave-header">
+                <div>
+                  <div class="wave-name">Session guard &amp; recovery check</div>
+                  <div class="wave-state" id="recovery-status">Live sessions persist in SQLite while a game is running</div>
+                </div>
+                <div class="recovery-actions">
+                  <button type="button" class="ctrl-btn" id="btn-sim-crash">Simulate force-quit</button>
+                  <button type="button" class="ctrl-btn" id="btn-sim-shutdown">Test safe quit</button>
+                </div>
+              </div>
+              <div class="recovery-console" id="recovery-console">
+                <p class="recovery-placeholder">Trigger a simulated force-quit or safe shutdown to inspect how OpenSync protects active save files.</p>
+              </div>
+            </div>
+
+            <div class="console-sidebar">
+              <h3>Never lose unsynced progress</h3>
+              <p>If the launcher closes unexpectedly while a game is open, the next startup inspects local save hashes and timestamps against the server and offers one-click save recovery before background sync runs.</p>
+              <dl class="spec-pairs">
+                <div><dt>Safe quit</dt><dd>Waits for in-flight save uploads and checkpoints SQLite WAL before exit</dd></div>
+                <div><dt>Playtime tracking</dt><dd>Excludes OS suspend and lid-close sleep gaps from session hours</dd></div>
+                <div><dt>Controller support</dt><dd>Full W3C Gamepad and keyboard spatial navigation across every view</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="stack">
+      <div class="section-header">
+        <h2 class="section-heading">Server and launcher division</h2>
+        <p class="section-copy">Two small focused codebases. Self-host the server on Linux or Docker, and connect as many desktop machines on your network as you want.</p>
+      </div>
+
+      <div class="ledger">
+        <div class="ledger-col">
+          <h3>OpenSync Server</h3>
+          <p class="ledger-sub">Node.js 22.13+, Express 5, and built-in SQLite.</p>
+          <ul class="ledger-list">
+            <li>
+              <strong>Live folder storage</strong>
+              <span>Uploaded games remain directly inspectable folders on disk rather than opaque blobs.</span>
+            </li>
+            <li>
+              <strong>Per-user overlays and deletions</strong>
+              <span>Each account keeps its own modified save overlay and versioned deletion list per manifest.</span>
+            </li>
+            <li>
+              <strong>Local authentication and profiles</strong>
+              <span>Password hashing via scrypt, stateless signed session cookies, and optional custom avatars.</span>
+            </li>
+            <li>
+              <strong>Hash verification on receipt</strong>
+              <span>Every overlay file is re-hashed on upload; mismatched hashes are rejected with HTTP 422.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="ledger-col">
+          <h3>OpenSync Launcher</h3>
+          <p class="ledger-sub">Rust workspace with a Tauri v2 desktop frontend.</p>
+          <ul class="ledger-list">
+            <li>
+              <strong>Multi-instance profile switcher</strong>
+              <span>Switch between home LAN, NAS servers, or local accounts while keeping local caches isolated.</span>
+            </li>
+            <li>
+              <strong>Automatic runtime resolution</strong>
+              <span>Classifies Windows PE and Linux ELF binaries by magic bytes and attaches GE-Proton on Linux.</span>
+            </li>
+            <li>
+              <strong>Offline queue and background sync</strong>
+              <span>Queues failed post-exit syncs cleanly in SQLite and flushes automatically on reconnect.</span>
+            </li>
+            <li>
+              <strong>Native Linux and Windows builds</strong>
+              <span>Packaged automatically via GitHub Actions into AppImage, Flatpak, and standalone Windows .exe.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section deploy-section" id="install">
+      <div class="section-header">
+        <h2 class="section-heading">Install OpenSync</h2>
+        <p class="section-copy">Download a prebuilt desktop package from release v0.1.0, or bring up your own archive server in one command.</p>
+      </div>
+
+      <div class="deploy-box">
+        <div class="deploy-tabs" role="tablist" aria-label="Installation options">
+          <button type="button" class="deploy-tab is-active" role="tab" aria-selected="true" data-install-tab="desktop">Desktop launcher</button>
+          <button type="button" class="deploy-tab" role="tab" aria-selected="false" data-install-tab="server">Server one-liner</button>
+          <button type="button" class="deploy-tab" role="tab" aria-selected="false" data-install-tab="docker">Docker Compose</button>
+          <button type="button" class="deploy-tab" role="tab" aria-selected="false" data-install-tab="source">Build from source</button>
+        </div>
+
+        <div class="deploy-content">
+          <div class="install-pane is-active" data-install-pane="desktop">
+            <div class="release-cards">
+              <div class="release-item">
+                <div class="release-info">
+                  <strong>Linux AppImage (amd64)</strong>
+                  <span>Portable single-file executable. Make executable and run directly on any modern distribution.</span>
+                </div>
+                <a class="btn btn-primary btn-sm" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.AppImage" target="_blank" rel="noopener">Download AppImage</a>
+              </div>
+              <div class="release-item">
+                <div class="release-info">
+                  <strong>Linux Flatpak bundle (amd64)</strong>
+                  <span>Sandboxed desktop bundle built on GNOME 49 runtime with DRI, network, and Steam Proton access.</span>
+                </div>
+                <a class="btn btn-secondary btn-sm" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_amd64.flatpak" target="_blank" rel="noopener">Download Flatpak</a>
+              </div>
+              <div class="release-item">
+                <div class="release-info">
+                  <strong>Windows x64 executable (.exe)</strong>
+                  <span>Standalone desktop binary with native Windows executable launching and folder picker support.</span>
+                </div>
+                <a class="btn btn-secondary btn-sm" href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/download/v0.1.0/OpenSync_Launcher_0.1.0_x64.exe" target="_blank" rel="noopener">Download .exe</a>
+              </div>
+            </div>
+            <div class="install-command-box" style="margin-top:18px;">
+              <span class="cmd-prompt" aria-hidden="true">$</span>
+              <code id="cmd-flatpak">flatpak install --user OpenSync_Launcher_0.1.0_amd64.flatpak &amp;&amp; flatpak run io.opensync.launcher</code>
+              <button type="button" class="cmd-copy-btn" data-copy="cmd-flatpak">Copy</button>
             </div>
           </div>
 
-          <div class="wave-canvas-wrap" id="wave-wrap">
-            <canvas id="wave-canvas" aria-label="Live download throughput waveform"></canvas>
-            <div class="wave-tooltip" id="wave-tooltip" hidden><strong id="tt-rate">0 MB/s</strong><span id="tt-time">now</span></div>
-            <div class="wave-grid-label wave-grid-top">120 MB/s</div>
-            <div class="wave-grid-label wave-grid-mid">60 MB/s</div>
-            <div class="wave-grid-label wave-grid-bottom">0</div>
+          <div class="install-pane" data-install-pane="server" hidden>
+            <p class="install-note">Installs Node.js dependencies, clones OpenSync, initializes SQLite storage, and links the <code>opensync</code> management command.</p>
+            <div class="install-command-box">
+              <span class="cmd-prompt" aria-hidden="true">$</span>
+              <code id="cmd-curl">curl -fsSL https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/install.sh | bash</code>
+              <button type="button" class="cmd-copy-btn" data-copy="cmd-curl">Copy</button>
+            </div>
+            <p class="install-subnote">Requires Node.js 22.13 or newer. The first account you register becomes the server administrator.</p>
           </div>
 
-          <div class="wave-modes" role="group" aria-label="Download mode">
-            <button class="mode-btn is-active" data-mode="store" type="button">
-              <span class="mode-dot dot-store"></span>
-              <span><strong>Uncompressed STORE</strong><small>Wire speed</small></span>
-            </button>
-            <button class="mode-btn" data-mode="throttle" type="button">
-              <span class="mode-dot dot-throttle"></span>
-              <span><strong>Throttled 50 MB/s</strong><small>Bandwidth cap</small></span>
-            </button>
-            <button class="mode-btn" data-mode="paused" type="button">
-              <span class="mode-dot dot-paused"></span>
-              <span><strong>Paused</strong><small>Resume anytime</small></span>
-            </button>
+          <div class="install-pane" data-install-pane="docker" hidden>
+            <p class="install-note">Runs the amd64 server container with persistent storage mounted on <code>/data</code> and healthchecks enabled.</p>
+            <div class="install-command-box">
+              <span class="cmd-prompt" aria-hidden="true">$</span>
+              <code id="cmd-docker">curl -O https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/docker-compose.yml &amp;&amp; docker compose up -d</code>
+              <button type="button" class="cmd-copy-btn" data-copy="cmd-docker">Copy</button>
+            </div>
+            <p class="install-subnote">Docker image target is linux/amd64. Use the install script above on ARM hosts.</p>
           </div>
 
-          <div class="wave-progress">
-            <div class="progress"><span class="progress-bar" id="wave-progress-bar" style="width:64%"></span></div>
-            <div class="wave-progress-meta"><span id="wave-file">hollow-peak.zip</span><span id="wave-bytes">7.8 / 12.2 GB</span></div>
-          </div>
-        </div>
-
-        <div class="launcher-side">
-          <div class="launcher-identity">
-            <img src="assets/opensync-auth-3x.png" alt="OpenSync" class="launcher-wordmark">
-            <p>A 60fps game cabinet built with Tauri. Connect to any server on your LAN, install to disk, and launch through native or Proton runtimes.</p>
-          </div>
-          <div class="launcher-feature-list">
-            <div class="lf-item"><span class="lf-check">✓</span><span>Zero-temp-file streaming extraction with inline SHA-256 checks</span></div>
-            <div class="lf-item"><span class="lf-check">✓</span><span>Pause, resume, cancel, and cap bandwidth on every transfer</span></div>
-            <div class="lf-item"><span class="lf-check">✓</span><span>Automatic save sync the moment a game exits</span></div>
-            <div class="lf-item"><span class="lf-check">✓</span><span>Proton and GE-Proton discovery with per-game prefixes</span></div>
-            <div class="lf-item"><span class="lf-check">✓</span><span>Full gamepad navigation for the couch or handheld</span></div>
-          </div>
-          <a class="btn btn-outline btn-block" href="https://github.com/piskevalee-cpu/OpenSync-Launcher" target="_blank" rel="noopener">View launcher source <span class="arrow">→</span></a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="capabilities">
-      <div class="section-head">
-        <div>
-          <span class="section-kicker">Built for real libraries</span>
-          <h2 class="section-title">One system, every machine</h2>
-        </div>
-        <p class="section-lead">Small by design. Node, SQLite, and a vanilla web UI on the server; Rust and Tauri on the desktop. No cloud account required.</p>
-      </div>
-
-      <div class="bento">
-        <article class="bento-card bento-wide" data-spotlight>
-          <div class="bento-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></div>
-          <h3>Live folders</h3>
-          <p>Games stay as real folders on disk, never locked inside archives. Point a sync at any local game directory and hash against the clean manifest.</p>
-          <span class="bento-tag">No repackaging</span>
-        </article>
-        <article class="bento-card" data-spotlight>
-          <div class="bento-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg></div>
-          <h3>Proton auto-setup</h3>
-          <p>Finds installed Proton builds and offers verified GE-Proton in one click, with isolated prefixes per game.</p>
-        </article>
-        <article class="bento-card" data-spotlight>
-          <div class="bento-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></div>
-          <h3>Background auto-sync</h3>
-          <p>Parallel hashing and 4 MB overlay uploads run after every session, queueing offline work until the server is back.</p>
-        </article>
-        <article class="bento-card" data-spotlight>
-          <div class="bento-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-          <h3>Screen-time clock</h3>
-          <p>Cumulative playtime per game, tracked with sleep-aware timing so suspended sessions never inflate the number.</p>
-        </article>
-        <article class="bento-card" data-spotlight>
-          <div class="bento-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10a5 5 0 0 1 5 5v1a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5v-1a5 5 0 0 1 5-5Z"/><path d="M7 12h.01M11 12h2"/></svg></div>
-          <h3>Gamepad UI</h3>
-          <p>Navigate the whole library with a controller or arrow keys, with spatial focus and live button hints.</p>
-        </article>
-        <article class="bento-card bento-wide" data-spotlight>
-          <div class="bento-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7"/></svg></div>
-          <h3>SQLite, zero config</h3>
-          <p>Metadata lives in a single database file. No external services, no migrations to run by hand, no cloud dependency.</p>
-          <span class="bento-tag">node:sqlite</span>
-        </article>
-      </div>
-    </section>
-
-    <section class="section deploy-section" id="deploy">
-      <div class="section-head">
-        <div>
-          <span class="section-kicker">Get it running</span>
-          <h2 class="section-title">Deploy in minutes</h2>
-        </div>
-        <p class="section-lead">Pick the path that fits your setup. The first account you register becomes the admin.</p>
-      </div>
-
-      <div class="deploy-card">
-        <div class="deploy-tabs" role="tablist" aria-label="Install methods">
-          <button class="deploy-tab is-active" role="tab" aria-selected="true" data-tab="curl" type="button">cURL one-liner</button>
-          <button class="deploy-tab" role="tab" aria-selected="false" data-tab="docker" type="button">Docker Compose</button>
-          <button class="deploy-tab" role="tab" aria-selected="false" data-tab="tauri" type="button">Tauri launcher</button>
-        </div>
-        <div class="deploy-body">
-          <div class="deploy-panel is-active" data-panel="curl">
-            <p class="deploy-desc">Installs dependencies, clones the repo, initializes storage, and registers the <code>opensync</code> service command.</p>
-            <div class="code-block"><span class="code-prompt">$</span><code id="code-curl">curl -fsSL https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/install.sh | bash</code><button class="code-copy" type="button" data-copy="code-curl" aria-label="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
-            <p class="deploy-hint">Node.js 22.13+ required. Interactive prompts choose the install directory and whether to start the server.</p>
-          </div>
-          <div class="deploy-panel" data-panel="docker" hidden>
-            <p class="deploy-desc">Runs the published amd64 image with data persisted in a named volume.</p>
-            <div class="code-block code-block-multiline"><code id="code-docker">curl -O https://raw.githubusercontent.com/piskevalee-cpu/OpenSync/refs/heads/main/docker-compose.yml
-docker compose up -d</code><button class="code-copy" type="button" data-copy="code-docker" aria-label="Copy commands"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
-            <p class="deploy-hint">Images are amd64 only. On ARM hardware, use the install script instead.</p>
-          </div>
-          <div class="deploy-panel" data-panel="tauri" hidden>
-            <p class="deploy-desc">Build the companion desktop app from source and connect it to your server.</p>
-            <div class="code-block code-block-multiline"><code id="code-tauri">git clone https://github.com/piskevalee-cpu/OpenSync-Launcher.git
-cd OpenSync-Launcher
-cargo run -p launcher-tauri</code><button class="code-copy" type="button" data-copy="code-tauri" aria-label="Copy commands"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
-            <p class="deploy-hint">Requires Rust and the WebKitGTK and GTK3 development libraries.</p>
+          <div class="install-pane" data-install-pane="source" hidden>
+            <p class="install-note">Compile the Tauri v2 desktop launcher workspace directly from GitHub.</p>
+            <div class="install-command-box">
+              <span class="cmd-prompt" aria-hidden="true">$</span>
+              <code id="cmd-source">git clone https://github.com/piskevalee-cpu/OpenSync-Launcher.git &amp;&amp; cd OpenSync-Launcher &amp;&amp; cargo build --release -p launcher-tauri</code>
+              <button type="button" class="cmd-copy-btn" data-copy="cmd-source">Copy</button>
+            </div>
+            <p class="install-subnote">Requires Rust toolchain, GTK3, and WebKitGTK 4.1 development libraries on Linux, or MSVC on Windows.</p>
           </div>
         </div>
       </div>
@@ -518,17 +476,18 @@ cargo run -p launcher-tauri</code><button class="code-copy" type="button" data-c
 
   <footer class="footer">
     <div class="footer-inner">
-      <div class="footer-brand">
-        <img src="assets/opensync-nav-2x.png" alt="OpenSync" width="140" height="32">
-        <p>A self-hosted game archive with differential save sync.</p>
+      <div class="footer-left">
+        <img src="assets/icon.png" alt="" width="28" height="28" class="footer-icon">
+        <div>
+          <strong>OpenSync</strong>
+          <span>Self-hosted game library and differential save sync. MIT licensed.</span>
+        </div>
       </div>
       <div class="footer-links">
-        <a href="https://github.com/piskevalee-cpu/OpenSync" target="_blank" rel="noopener">Server & web</a>
-        <a href="https://github.com/piskevalee-cpu/OpenSync-Launcher" target="_blank" rel="noopener">Launcher</a>
-        <a href="#sync">How sync works</a>
-        <a href="#deploy">Deploy</a>
+        <a href="https://github.com/piskevalee-cpu/OpenSync" target="_blank" rel="noopener">Server repository</a>
+        <a href="https://github.com/piskevalee-cpu/OpenSync-Launcher" target="_blank" rel="noopener">Launcher repository</a>
+        <a href="https://github.com/piskevalee-cpu/OpenSync-Launcher/releases/tag/v0.1.0" target="_blank" rel="noopener">v0.1.0 releases</a>
       </div>
-      <div class="footer-note">MIT licensed. Built for the LAN.</div>
     </div>
   </footer>
 
