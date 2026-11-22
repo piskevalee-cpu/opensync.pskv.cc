@@ -435,45 +435,56 @@
 
   // Real-time GitHub contributors showcase (avatars + profiles across OpenSync & OpenSync-Launcher)
   const CONTRIBUTOR_REPOS = [
-    'https://api.github.com/repos/piskevalee-cpu/OpenSync/contributors?per_page=100',
-    'https://api.github.com/repos/piskevalee-cpu/OpenSync-Launcher/contributors?per_page=100',
+    'piskevalee-cpu/OpenSync',
+    'piskevalee-cpu/OpenSync-Launcher',
   ];
 
   async function loadContributors() {
     const grid = document.getElementById('contributors-grid');
     if (!grid) return;
     try {
-      const results = await Promise.all(
-        CONTRIBUTOR_REPOS.map((url) =>
-          fetch(url, {
-            cache: 'no-store',
-            headers: { Accept: 'application/vnd.github+json' },
-          }).then((r) => (r.ok ? r.json() : [])).catch(() => []),
-        ),
-      );
+      const fetchJson = (url) =>
+        fetch(url, {
+          cache: 'no-store',
+          headers: { Accept: 'application/vnd.github+json' },
+        }).then((r) => (r.ok ? r.json() : [])).catch(() => []);
+
+      const [contribLists, prLists] = await Promise.all([
+        Promise.all(CONTRIBUTOR_REPOS.map((repo) => fetchJson(`https://api.github.com/repos/${repo}/contributors?per_page=100`))),
+        Promise.all(CONTRIBUTOR_REPOS.map((repo) => fetchJson(`https://api.github.com/repos/${repo}/pulls?state=closed&per_page=100`))),
+      ]);
 
       const byLogin = new Map();
-      for (const list of results) {
+      const upsert = (user, count, countType) => {
+        if (!user || user.type === 'Bot' || !user.login) return;
+        const key = user.login.toLowerCase();
+        const existing = byLogin.get(key) || {
+          login: user.login,
+          avatar_url: user.avatar_url || '',
+          html_url: user.html_url || `https://github.com/${encodeURIComponent(user.login)}`,
+          commits: 0,
+          prs: 0,
+        };
+        if (!existing.avatar_url && user.avatar_url) existing.avatar_url = user.avatar_url;
+        if (countType === 'commits') existing.commits += count;
+        else existing.prs += count;
+        byLogin.set(key, existing);
+      };
+
+      for (const list of contribLists) {
         if (!Array.isArray(list)) continue;
-        for (const item of list) {
-          if (!item || item.type === 'Bot' || !item.login) continue;
-          const key = item.login.toLowerCase();
-          const existing = byLogin.get(key);
-          if (existing) {
-            existing.contributions += Number(item.contributions || 0);
-            if (!existing.avatar_url && item.avatar_url) existing.avatar_url = item.avatar_url;
-          } else {
-            byLogin.set(key, {
-              login: item.login,
-              avatar_url: item.avatar_url || '',
-              html_url: item.html_url || `https://github.com/${encodeURIComponent(item.login)}`,
-              contributions: Number(item.contributions || 0),
-            });
-          }
+        for (const item of list) upsert(item, Number(item?.contributions || 0), 'commits');
+      }
+      for (const list of prLists) {
+        if (!Array.isArray(list)) continue;
+        for (const pr of list) {
+          if (pr?.merged_at && pr.user) upsert(pr.user, 1, 'prs');
         }
       }
 
-      const contributors = [...byLogin.values()].sort((a, b) => b.contributions - a.contributions);
+      const contributors = [...byLogin.values()].sort(
+        (a, b) => (b.commits - a.commits) || (b.prs - a.prs) || a.login.localeCompare(b.login),
+      );
       if (!contributors.length) {
         grid.replaceChildren();
         const link = document.createElement('a');
@@ -513,7 +524,9 @@
 
           const count = document.createElement('span');
           count.className = 'contributor-count';
-          count.textContent = `${c.contributions} ${c.contributions === 1 ? 'commit' : 'commits'}`;
+          count.textContent = c.commits > 0
+            ? `${c.commits} ${c.commits === 1 ? 'commit' : 'commits'}`
+            : `${c.prs} merged ${c.prs === 1 ? 'PR' : 'PRs'}`;
 
           info.append(name, count);
           pill.append(avatar, info);
