@@ -172,29 +172,31 @@
   });
 
   // Exact WebUI 3D Steam capsule tilt + acrylic sheen sweep
-  document.querySelectorAll('.game-tile').forEach((tile) => {
+  function attachSteamTilt(el) {
     const MAX_TILT_X = 7;
     const MAX_TILT_Y = 8;
 
-    tile.addEventListener('pointermove', (e) => {
+    el.addEventListener('pointermove', (e) => {
       if (reducedMotion) return;
-      const rect = tile.getBoundingClientRect();
+      const rect = el.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       const px = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const py = ((e.clientY - rect.top) / rect.height) * 2 - 1;
-      tile.style.setProperty('--rx', `${(-py * MAX_TILT_X).toFixed(2)}deg`);
-      tile.style.setProperty('--ry', `${(px * MAX_TILT_Y).toFixed(2)}deg`);
-      tile.style.setProperty('--gx', `${(((e.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`);
-      tile.style.setProperty('--gy', `${(((e.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`);
+      el.style.setProperty('--rx', `${(-py * MAX_TILT_X).toFixed(2)}deg`);
+      el.style.setProperty('--ry', `${(px * MAX_TILT_Y).toFixed(2)}deg`);
+      el.style.setProperty('--gx', `${(((e.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`);
+      el.style.setProperty('--gy', `${(((e.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`);
     });
 
-    tile.addEventListener('pointerleave', () => {
-      tile.style.removeProperty('--rx');
-      tile.style.removeProperty('--ry');
-      tile.style.removeProperty('--gx');
-      tile.style.removeProperty('--gy');
+    el.addEventListener('pointerleave', () => {
+      el.style.removeProperty('--rx');
+      el.style.removeProperty('--ry');
+      el.style.removeProperty('--gx');
+      el.style.removeProperty('--gy');
     });
-  });
+  }
+
+  document.querySelectorAll('.game-tile').forEach(attachSteamTilt);
 
   let playTimer = null;
   document.querySelectorAll('.tile-play').forEach((btn) => {
@@ -428,10 +430,11 @@
     });
   });
 
-  // Real-time GitHub contributors showcase (avatars + profiles across OpenSync & OpenSync-Launcher)
+  // Real-time GitHub contributors showcase (avatars + profiles across OpenSync, OpenSync-Launcher & opensync.pskv.cc)
   const CONTRIBUTOR_REPOS = [
     'piskevalee-cpu/OpenSync',
     'piskevalee-cpu/OpenSync-Launcher',
+    'piskevalee-cpu/opensync.pskv.cc',
   ];
   const FALLBACK_CONTRIBUTORS = [
     { login: 'piskevalee-cpu', html_url: 'https://github.com/piskevalee-cpu', role: 'Maintainer' },
@@ -535,8 +538,13 @@
               ? `${c.prs} merged ${c.prs === 1 ? 'PR' : 'PRs'}`
               : (c.role || 'Contributor');
 
+          const sheen = document.createElement('span');
+          sheen.className = 'tile-sheen';
+          sheen.setAttribute('aria-hidden', 'true');
+
           info.append(name, count);
-          pill.append(avatar, info);
+          pill.append(sheen, avatar, info);
+          attachSteamTilt(pill);
           return pill;
         }),
       );
